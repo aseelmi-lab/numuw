@@ -470,9 +470,13 @@ function appendBotMessage(data) {
   if (data.quick_replies && data.quick_replies.length > 0) {
     const qr = document.createElement('div');
     qr.className = 'quick-replies';
-    qr.innerHTML = data.quick_replies.map(r =>
-      `<button class="quick-reply-btn" onclick="sendQuickReply(this,'${r}')">${r}</button>`
-    ).join('');
+    data.quick_replies.forEach(r => {
+      const btn = document.createElement('button');
+      btn.className = 'quick-reply-btn';
+      btn.textContent = r;
+      btn.addEventListener('click', function() { sendQuickReply(this, r); });
+      qr.appendChild(btn);
+    });
     messagesEl.appendChild(qr);
   }
   if (data.stress_level) messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));

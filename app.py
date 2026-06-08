@@ -94,7 +94,7 @@ def chat():
             profile_context = f"\n\nمعلومات المستخدم:\n- هدفه المالي: {goal}\n- نطاق دخله: {income_range}\nخصص ردك بناءً على هدفه."
     
     response = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-sonnet-4-20250514",
         max_tokens=1500,
         system=SYSTEM_PROMPT + profile_context,
         messages=messages
@@ -104,9 +104,11 @@ def chat():
     try:
         import json
         if '```' in raw:
-            raw = raw.split('```')[1]
-            if raw.startswith('json'):
-                raw = raw[4:]
+            parts = raw.split('```')
+            # get the content inside the first code block
+            raw = parts[1].strip()
+            if raw.lower().startswith('json'):
+                raw = raw[4:].strip()
         parsed = json.loads(raw.strip())
     except:
         parsed = {"message": raw, "has_data": False, "early_warning": None, "stress_level": None, "stress_reason": None, "data": None, "verdict": None, "loan_details": None, "plan_a": None, "plan_b": None, "quick_replies": None, "decision_quality": None, "decision_reasons": None, "rescue_plan": None, "scenarios": None}
@@ -119,7 +121,7 @@ def analyze_image():
     image_data = data.get('image')
     media_type = data.get('media_type', 'image/jpeg')
     response = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-sonnet-4-20250514",
         max_tokens=1500,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": [
@@ -131,8 +133,10 @@ def analyze_image():
     try:
         import json
         if '```' in raw:
-            raw = raw.split('```')[1]
-            if raw.startswith('json'): raw = raw[4:]
+            parts = raw.split('```')
+            raw = parts[1].strip()
+            if raw.lower().startswith('json'):
+                raw = raw[4:].strip()
         parsed = json.loads(raw.strip())
     except:
         parsed = {"message": raw, "has_data": False, "early_warning": None, "stress_level": None, "stress_reason": None, "data": None, "verdict": None, "loan_details": None, "plan_a": None, "plan_b": None, "quick_replies": None, "decision_quality": None, "decision_reasons": None, "rescue_plan": None, "scenarios": None}
