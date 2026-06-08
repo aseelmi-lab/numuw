@@ -325,10 +325,42 @@ function startApp() {
   document.getElementById('main-app').classList.add('visible');
   document.getElementById('profile-goal').textContent = userProfile.goal;
   document.getElementById('profile-income').textContent = userProfile.income_range;
-  document.getElementById('profile-level').textContent = 'عام';
+
+  // Update quick actions based on goal
+  const goalQuicks = {
+    'شراء منزل': [
+      { icon: '🏠', label: 'هل أقدر أشتري منزل؟', msg: 'أريد معرفة هل وضعي المالي يسمح لي بشراء منزل' },
+      { icon: '🏦', label: 'استشارة قرض عقاري', msg: null, type: 'قرض' },
+      { icon: '🔮', label: 'ماذا لو؟', msg: null, type: 'ماذا لو' }
+    ],
+    'شراء سيارة': [
+      { icon: '🚗', label: 'هل أقدر أشتري سيارة؟', msg: 'أريد معرفة هل وضعي المالي يسمح لي بشراء سيارة' },
+      { icon: '🏦', label: 'استشارة تمويل سيارة', msg: null, type: 'قرض' },
+      { icon: '🔮', label: 'ماذا لو؟', msg: null, type: 'ماذا لو' }
+    ],
+    'الزواج': [
+      { icon: '💍', label: 'تخطيط ميزانية الزواج', msg: 'أريد تحليل ميزانيتي للزواج' },
+      { icon: '🏦', label: 'استشارة قرض الزواج', msg: null, type: 'قرض' },
+      { icon: '🔮', label: 'ماذا لو؟', msg: null, type: 'ماذا لو' }
+    ],
+    'default': [
+      { icon: '📊', label: 'تحليل وضعي', msg: 'أريد تحليل وضعي المالي الحالي' },
+      { icon: '🏦', label: 'استشارة قرض', msg: null, type: 'قرض' },
+      { icon: '🔮', label: 'ماذا لو؟', msg: null, type: 'ماذا لو' }
+    ]
+  };
+
+  const quicks = goalQuicks[userProfile.goal] || goalQuicks['default'];
+  const grid = document.querySelector('.quick-grid');
+  grid.innerHTML = quicks.map(q =>
+    q.type
+      ? `<div class="quick-card" onclick="openFreeInput('${q.type}')"><div class="q-icon">${q.icon}</div><div class="q-label">${q.label}</div></div>`
+      : `<div class="quick-card" onclick="quickAsk('${q.msg}')"><div class="q-icon">${q.icon}</div><div class="q-label">${q.label}</div></div>`
+  ).join('');
+
   setTimeout(() => {
     appendBotMessage({
-      message: `أهلاً وسهلاً! 🌱 أنا نمو، مستشارك المالي.\n\nفهمت أن هدفك هو **${userProfile.goal}**. سأخصص نصائحي بناءً على وضعك تحديداً.\n\nحدثني عن وضعك المالي الحالي — دخلك، مصروفاتك، مدخراتك — وسأحللها لك بالتفصيل.`,
+      message: `أهلاً وسهلاً! 🌱 أنا نمو، مستشارك المالي من الإنماء.\n\nفهمت أن هدفك هو **${userProfile.goal}** ودخلك الشهري حوالي **${userProfile.income_range}**.\n\nحدثني عن وضعك المالي — دخلك، مصروفاتك، مدخراتك — وسأحللها لك بالتفصيل وأخبرك مدى قربك من هدفك.`,
       has_data: false
     });
   }, 300);
@@ -425,6 +457,8 @@ function buildDashboard(data) {
   const verdictLabels = { ok: '✅ تقدر براحة', warning: '⚠️ ممكن لكن انتبه', danger: '❌ لا تقدر الحين' };
   const score = d.health_score || 0;
   const scoreClass = verdict || 'ok';
+  function fmt(n) { return n > 0 ? n.toLocaleString() + ' ر' : '—'; }
+
   const remaining = Math.max(0, d.remaining || 0);
   let scoreLabel = score >= 70 ? 'صحة مالية ممتازة' : score >= 40 ? 'وضع مالي معقول' : 'وضع مالي يحتاج تحسين';
 
@@ -515,11 +549,11 @@ function buildDashboard(data) {
     </div>
     ${verdict ? `<div class="verdict-badge ${verdict}">${verdictLabels[verdict]}</div>` : ''}
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">الدخل</div><div class="stat-value">${(d.income||0).toLocaleString()} ر</div></div>
-      <div class="stat-card"><div class="stat-label">المصروفات</div><div class="stat-value">${(d.expenses||0).toLocaleString()} ر</div></div>
-      <div class="stat-card"><div class="stat-label">المدخرات</div><div class="stat-value positive">${(d.savings||0).toLocaleString()} ر</div></div>
-      <div class="stat-card"><div class="stat-label">القسط الجديد</div><div class="stat-value">${(d.new_payment||0).toLocaleString()} ر</div></div>
-      <div class="stat-card"><div class="stat-label">المتبقي</div><div class="stat-value ${remaining>0?'positive':'negative'}">${remaining.toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">الدخل</div><div class="stat-value">${fmt(d.income||0)}</div></div>
+      <div class="stat-card"><div class="stat-label">المصروفات</div><div class="stat-value">${fmt(d.expenses||0)}</div></div>
+      <div class="stat-card"><div class="stat-label">المدخرات</div><div class="stat-value positive">${fmt(d.savings||0)}</div></div>
+      <div class="stat-card"><div class="stat-label">القسط الجديد</div><div class="stat-value">${fmt(d.new_payment||0)}</div></div>
+      <div class="stat-card"><div class="stat-label">المتبقي</div><div class="stat-value ${remaining>0?'positive':'negative'}">${fmt(remaining)}</div></div>
       <div class="stat-card"><div class="stat-label">نسبة الادخار</div><div class="stat-value ${(d.savings_rate||0)>=20?'positive':'negative'}">${d.savings_rate||0}%</div></div>
     </div>
     <div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>

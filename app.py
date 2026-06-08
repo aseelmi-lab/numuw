@@ -67,10 +67,9 @@ def chat():
     profile_context = ""
     if user_profile:
         goal = user_profile.get('goal', '')
-        level = user_profile.get('level', '')
         income_range = user_profile.get('income_range', '')
         if goal:
-            profile_context = f"\n\nمعلومات المستخدم: هدفه المالي: {goal}، مستواه المالي: {level}، نطاق دخله: {income_range}. خصص ردك بناءً على هذه المعلومات."
+            profile_context = f"\n\nمعلومات المستخدم:\n- هدفه المالي: {goal}\n- نطاق دخله: {income_range}\n\nمهم: خصص ردك وتحليلك بناءً على هدفه. مثلاً لو هدفه شراء منزل اذكر مدى قربه أو بعده عن الهدف. لو هدفه سيارة قدم مقارنة خيارات التمويل."
     
     system = SYSTEM_PROMPT + profile_context
     
