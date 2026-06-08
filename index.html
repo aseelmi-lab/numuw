@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>نمو — مستشارك المالي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--navy-dark:#142038;--navy-mid:#243558;--navy-light:#2d4270;
+  --beige:#FAE8E0;--beige-dark:#f0d8cc;--white:#fff;
+  --text:#1B2A4A;--muted:#8a9bbf;--border:rgba(27,42,74,0.12);
+  --green:#00A651;--red:#e53e3e;--yellow:#d69e2e;--orange:#dd6b20;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--beige);color:var(--text);min-height:100vh;}
+/* ===== ONBOARDING ===== */
+#onboarding{position:fixed;inset:0;background:var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity 0.5s;}
+#onboarding.hidden{opacity:0;pointer-events:none;}
+.ob-logo{font-size:48px;margin-bottom:8px;}
+.ob-title{font-size:32px;font-weight:800;color:#fff;margin-bottom:4px;}
+.ob-sub{font-size:15px;color:rgba(250,232,224,0.6);margin-bottom:40px;text-align:center;}
+.ob-step{width:100%;max-width:480px;display:none;animation:fadeUp 0.4s ease;}
+.ob-step.active{display:block;}
+.ob-question{font-size:18px;font-weight:700;color:#fff;margin-bottom:20px;}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.ob-card{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:16px;cursor:pointer;text-align:center;transition:all 0.2s;color:var(--beige);}
+.ob-card:hover,.ob-card.selected{background:rgba(250,232,224,0.15);border-color:var(--beige);}
+.ob-card .icon{font-size:28px;margin-bottom:8px;}
+.ob-card .label{font-size:13px;font-weight:600;}
+.ob-slider-wrap{margin-bottom:24px;}
+.ob-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.2);outline:none;}
+.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--beige);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.ob-slider-labels{display:flex;justify-content:space-between;font-size:12px;color:rgba(250,232,224,0.5);margin-top:8px;}
+.ob-slider-value{text-align:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:12px;}
+.ob-levels{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.ob-level{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 18px;cursor:pointer;color:var(--beige);transition:all 0.2s;}
+.ob-level:hover,.ob-level.selected{background:rgba(250,232,224,0.15);border-color:var(--beige);}
+.ob-level h4{font-size:15px;font-weight:700;margin-bottom:2px;}
+.ob-level p{font-size:12px;opacity:0.6;}
+.ob-progress{display:flex;gap:6px;margin-bottom:32px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.3s;}
+.ob-dot.active{background:var(--beige);}
+.ob-btn{width:100%;padding:16px;background:var(--beige);color:var(--navy);border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.ob-btn:hover{background:#fff;}
+/* ===== MAIN APP ===== */
+#main-app{display:none;flex-direction:column;min-height:100vh;}
+#main-app.visible{display:flex;}
+header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:2px;}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--navy),var(--navy-dark));border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(27,42,74,0.2);}
+.logo h1{font-size:28px;font-weight:800;color:var(--navy);}
+.tagline{color:var(--muted);font-size:13px;margin-right:56px;}
+.powered{display:flex;align-items:center;gap:6px;margin-top:3px;margin-right:56px;}
+.powered span{font-size:11px;color:var(--muted);}
+.inma-badge{font-size:11px;font-weight:700;color:var(--navy);border:1px solid var(--border);padding:2px 8px;border-radius:20px;}
+/* User profile banner */
+#profile-banner{width:100%;max-width:780px;margin:0 auto 4px;padding:0 24px;}
+.profile-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(27,42,74,0.06);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);}
+.profile-pill span{color:var(--navy);font-weight:600;}
+/* Quick actions */
+#quick-actions{width:100%;max-width:780px;margin:0 auto;padding:8px 24px;}
+.quick-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.quick-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;text-align:center;transition:all 0.2s;box-shadow:0 2px 6px rgba(27,42,74,0.05);}
+.quick-card:hover{border-color:var(--navy);transform:translateY(-1px);}
+.quick-card .q-icon{font-size:22px;margin-bottom:4px;}
+.quick-card .q-label{font-size:12px;font-weight:600;color:var(--text);}
+/* Chat */
+.chat-wrap{width:100%;max-width:780px;margin:0 auto;flex:1;display:flex;flex-direction:column;padding:0 16px;}
+#messages{flex:1;display:flex;flex-direction:column;gap:16px;padding:12px 0 24px;min-height:200px;}
+.msg{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
+.msg.user{flex-direction:row-reverse;}
+.msg-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;}
+.msg.user .msg-avatar{background:var(--navy-mid);border:1px solid var(--border);}
+.msg.bot .msg-avatar{background:var(--navy);}
+.msg-bubble{max-width:82%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.75;}
+.msg.user .msg-bubble{background:var(--navy);color:var(--beige);border-radius:18px 4px 18px 18px;font-weight:500;}
+.msg.bot .msg-bubble{background:var(--white);border:1px solid var(--border);border-radius:4px 18px 18px 18px;white-space:pre-line;box-shadow:0 2px 8px rgba(27,42,74,0.05);}
+/* Stress indicator */
+.stress-bar{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px 18px;margin-top:8px;animation:fadeUp 0.3s ease;}
+.stress-label{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.stress-track{display:flex;gap:4px;height:10px;border-radius:5px;overflow:hidden;margin-bottom:8px;}
+.stress-seg{flex:1;border-radius:3px;transition:opacity 0.3s;}
+.stress-seg.active{opacity:1;}
+.stress-seg.inactive{opacity:0.15;}
+.stress-info{display:flex;justify-content:space-between;align-items:center;}
+.stress-status{font-size:14px;font-weight:700;}
+.stress-reason{font-size:12px;color:var(--muted);}
+/* Early warning */
+.early-warning{background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:13px;color:var(--red);font-weight:600;animation:fadeUp 0.3s ease;}
+/* Dashboard */
+.dashboard{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:20px;margin-top:8px;box-shadow:0 4px 16px rgba(27,42,74,0.07);animation:fadeUp 0.4s ease;}
+.dash-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px;}
+.health-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:14px;background:var(--beige);border-radius:14px;}
+.score-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;border:3px solid;}
+.score-circle.ok{background:rgba(0,166,81,0.1);color:var(--green);border-color:var(--green);}
+.score-circle.warning{background:rgba(214,158,46,0.1);color:var(--yellow);border-color:var(--yellow);}
+.score-circle.danger{background:rgba(229,62,62,0.1);color:var(--red);border-color:var(--red);}
+.score-info h3{font-size:15px;font-weight:700;margin-bottom:2px;}
+.score-info p{font-size:12px;color:var(--muted);}
+.verdict-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:14px;}
+.verdict-badge.ok{background:rgba(0,166,81,0.1);color:var(--green);}
+.verdict-badge.warning{background:rgba(214,158,46,0.1);color:var(--yellow);}
+.verdict-badge.danger{background:rgba(229,62,62,0.1);color:var(--red);}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.stat-card{background:var(--beige);border-radius:12px;padding:10px 12px;}
+.stat-label{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.stat-value{font-size:16px;font-weight:800;color:var(--navy);}
+.stat-value.positive{color:var(--green);}
+.stat-value.negative{color:var(--red);}
+.chart-wrap{position:relative;height:180px;margin-bottom:16px;}
+/* Decision quality */
+.decision-card{background:var(--beige);border-radius:14px;padding:16px;margin-top:14px;}
+.decision-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;text-transform:uppercase;}
+.success-rate{text-align:center;margin-bottom:14px;}
+.success-num{font-size:36px;font-weight:800;}
+.success-num.ok{color:var(--green);}
+.success-num.warning{color:var(--yellow);}
+.success-num.danger{color:var(--red);}
+.success-label{font-size:12px;color:var(--muted);}
+.timeline-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.timeline-item{background:var(--white);border-radius:10px;padding:10px 12px;}
+.timeline-period{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.timeline-text{font-size:12px;font-weight:600;color:var(--text);}
+.goal-align{display:flex;align-items:center;gap:8px;}
+.goal-bar-wrap{flex:1;height:6px;background:rgba(27,42,74,0.1);border-radius:3px;overflow:hidden;}
+.goal-bar{height:100%;border-radius:3px;background:var(--green);}
+.goal-pct{font-size:12px;font-weight:700;color:var(--text);}
+/* Decision reasons */
+.reasons-card{background:rgba(27,42,74,0.04);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px;}
+.reasons-title{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.reason-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:var(--text);}
+.reason-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px;}
+.reason-dot.ok{background:var(--green);}
+/* Scenarios */
+.scenarios-section{margin-top:14px;}
+.scenarios-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+.scenarios-grid{display:flex;flex-direction:column;gap:8px;}
+.scenario-row{display:flex;align-items:center;gap:10px;background:var(--beige);border-radius:12px;padding:12px 14px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;}
+.scenario-row.best{border-color:var(--green);}
+.scenario-row.medium{border-color:var(--yellow);}
+.scenario-row.risky{border-color:var(--red);}
+.scenario-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.scenario-rank.best{background:rgba(0,166,81,0.15);color:var(--green);}
+.scenario-rank.medium{background:rgba(214,158,46,0.15);color:var(--yellow);}
+.scenario-rank.risky{background:rgba(229,62,62,0.15);color:var(--red);}
+.scenario-info{flex:1;}
+.scenario-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.scenario-detail{font-size:11px;color:var(--muted);}
+.scenario-amount{font-size:16px;font-weight:800;color:var(--navy);}
+/* Rescue */
+.rescue-card{background:rgba(229,62,62,0.04);border:1px solid rgba(229,62,62,0.18);border-radius:14px;padding:14px;margin-top:12px;}
+.rescue-title{font-size:12px;font-weight:700;color:var(--red);margin-bottom:10px;}
+.rescue-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;}
+.step-num{width:20px;height:20px;background:var(--red);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+/* Saudi comparison */
+.comparison-section{margin-top:14px;}
+.comparison-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+.comparison-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.cmp-label{font-size:12px;color:var(--text);width:90px;flex-shrink:0;}
+.cmp-bar-wrap{flex:1;height:8px;background:var(--beige);border-radius:4px;overflow:hidden;position:relative;}
+.cmp-bar{height:100%;border-radius:4px;}
+.cmp-bar.good{background:var(--green);}
+.cmp-bar.bad{background:var(--red);}
+.cmp-pct{font-size:11px;color:var(--muted);width:32px;}
+.cmp-status{font-size:12px;font-weight:700;width:20px;}
+.cmp-status.good{color:var(--green);}
+.cmp-status.bad{color:var(--red);}
+/* Typing */
+.typing{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
+.typing-avatar{width:32px;height:32px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.typing-bubble{background:var(--white);border:1px solid var(--border);border-radius:4px 18px 18px 18px;padding:14px 18px;display:flex;gap:5px;align-items:center;}
+.dot{width:6px;height:6px;background:var(--navy);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.4;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+/* Input */
+.input-area{padding:12px 0 28px;position:sticky;bottom:0;background:linear-gradient(to top,var(--beige) 80%,transparent);}
+.input-box{display:flex;gap:8px;align-items:flex-end;background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:8px 8px 8px 14px;box-shadow:0 2px 12px rgba(27,42,74,0.07);}
+.input-box:focus-within{border-color:var(--navy);}
+#userInput{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;resize:none;line-height:1.6;max-height:100px;min-height:26px;}
+#userInput::placeholder{color:var(--muted);}
+.btn-row{display:flex;gap:6px;}
+#sendBtn,#imgBtn{width:40px;height:40px;border:none;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
+#sendBtn{background:var(--navy);box-shadow:0 3px 10px rgba(27,42,74,0.2);}
+#imgBtn{background:var(--beige);border:1.5px solid var(--border);}
+#sendBtn:hover,#imgBtn:hover{transform:scale(1.05);}
+#sendBtn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+#sendBtn svg{width:16px;height:16px;fill:var(--beige);}
+#imgBtn svg{width:16px;height:16px;fill:var(--navy);}
+.hint{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;opacity:0.5;}
+.img-preview{max-width:180px;border-radius:10px;margin:6px 0;display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-logo">🌱</div>
+  <div class="ob-title">نمو</div>
+  <div class="ob-sub">مستشارك المالي الذكي من الإنماء</div>
+  <div class="ob-progress">
+    <div class="ob-dot active" id="dot0"></div>
+    <div class="ob-dot" id="dot1"></div>
+  </div>
+
+  <!-- Step 1: Goal -->
+  <div class="ob-step active" id="step0">
+    <div class="ob-question">🎯 ما هدفك المالي الرئيسي؟</div>
+    <div class="ob-grid">
+      <div class="ob-card" onclick="selectGoal(this,'شراء منزل')"><div class="icon">🏠</div><div class="label">شراء منزل</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'شراء سيارة')"><div class="icon">🚗</div><div class="label">شراء سيارة</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الزواج')"><div class="icon">💍</div><div class="label">الزواج</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'السفر')"><div class="icon">✈️</div><div class="label">السفر</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الاستثمار')"><div class="icon">📈</div><div class="label">الاستثمار</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الادخار العام')"><div class="icon">💰</div><div class="label">الادخار</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <input type="text" id="customGoal" placeholder="هدف آخر..." style="flex:1;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:var(--beige);font-family:'Tajawal',sans-serif;font-size:14px;outline:none;" oninput="handleCustomGoal(this.value)">
+    </div>
+    <button class="ob-btn" onclick="nextStep()" id="btn0" disabled>التالي ←</button>
+  </div>
+
+  <!-- Step 2: Income -->
+  <div class="ob-step" id="step1">
+    <div class="ob-question">💰 ما نطاق دخلك الشهري؟</div>
+    <div class="ob-slider-wrap">
+      <div class="ob-slider-value" id="sliderVal">5,000 ريال</div>
+      <input type="range" class="ob-slider" id="incomeSlider" min="0" max="50000" step="500" value="5000" oninput="updateSlider(this.value)">
+      <div class="ob-slider-labels"><span>0</span><span>25,000</span><span>50,000+</span></div>
+    </div>
+    <button class="ob-btn" onclick="startApp()">ابدأ مع نمو 🌱</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🌱</div>
+      <h1>نمو</h1>
+    </div>
+    <p class="tagline">مستشارك المالي الذكي — يحلل وضعك قبل أي قرار</p>
+    <div class="powered"><span>مدعوم من</span><span class="inma-badge">الإنماء</span></div>
+  </header>
+
+  <div id="profile-banner">
+    <div class="profile-pill">هدفك: <span id="profile-goal">-</span> &nbsp;|&nbsp; الدخل: <span id="profile-income">-</span></div>
+  </div>
+
+  <div id="quick-actions">
+    <div class="quick-title">ابدأ من هنا</div>
+    <div class="quick-grid">
+      <div class="quick-card" onclick="quickAsk('أريد تحليل وضعي المالي الحالي')"><div class="q-icon">📊</div><div class="q-label">تحليل وضعي</div></div>
+      <div class="quick-card" onclick="openFreeInput('قرض')"><div class="q-icon">🏦</div><div class="q-label">استشارة قرض</div></div>
+      <div class="quick-card" onclick="openFreeInput('ماذا لو')"><div class="q-icon">🔮</div><div class="q-label">ماذا لو؟</div></div>
+    </div>
+  </div>
+
+  <div class="chat-wrap">
+    <div id="messages"></div>
+    <div class="input-area">
+      <div class="input-box">
+        <textarea id="userInput" rows="1" placeholder="اكتب وضعك المالي هنا..."></textarea>
+        <div class="btn-row">
+          <button id="imgBtn" onclick="document.getElementById('imgInput').click()" title="رفع وثيقة مالية">
+            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          </button>
+          <button id="sendBtn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImage(event)">
+      <p class="hint">⚡ يدعم النص والصور — بياناتك آمنة ومشفرة</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== ONBOARDING =====
+let userProfile = { goal: '', income_range: '', level: 'متوسط' };
+let currentStep = 0;
+
+function selectGoal(el, goal) {
+  document.querySelectorAll('#step0 .ob-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  userProfile.goal = goal;
+  document.getElementById('customGoal').value = '';
+  document.getElementById('btn0').disabled = false;
+}
+
+function handleCustomGoal(val) {
+  if (val.trim().length > 0) {
+    document.querySelectorAll('#step0 .ob-card').forEach(c => c.classList.remove('selected'));
+    userProfile.goal = val.trim();
+    document.getElementById('btn0').disabled = false;
+  } else if (!userProfile.goal) {
+    document.getElementById('btn0').disabled = true;
+  }
+}
+
+function updateSlider(val) {
+  const num = parseInt(val);
+  const label = num === 0 ? 'بدون دخل ثابت' : num.toLocaleString() + ' ريال';
+  document.getElementById('sliderVal').textContent = label;
+  userProfile.income_range = label;
+}
+
+function nextStep() {
+  document.getElementById('step' + currentStep).classList.remove('active');
+  document.getElementById('dot' + currentStep).classList.remove('active');
+  currentStep++;
+  document.getElementById('step' + currentStep).classList.add('active');
+  document.getElementById('dot' + currentStep).classList.add('active');
+}
+
+function startApp() {
+  if (!userProfile.goal) return;
+  if (!userProfile.income_range) userProfile.income_range = '5,000 ريال';
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('main-app').classList.add('visible');
+  document.getElementById('profile-goal').textContent = userProfile.goal;
+  document.getElementById('profile-income').textContent = userProfile.income_range;
+  document.getElementById('profile-level').textContent = 'عام';
+  setTimeout(() => {
+    appendBotMessage({
+      message: `أهلاً وسهلاً! 🌱 أنا نمو، مستشارك المالي.\n\nفهمت أن هدفك هو **${userProfile.goal}**. سأخصص نصائحي بناءً على وضعك تحديداً.\n\nحدثني عن وضعك المالي الحالي — دخلك، مصروفاتك، مدخراتك — وسأحللها لك بالتفصيل.`,
+      has_data: false
+    });
+  }, 300);
+}
+
+// ===== MAIN APP =====
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+let conversationHistory = [];
+
+inputEl.addEventListener('input', () => {
+  inputEl.style.height = 'auto';
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
+});
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+function openFreeInput(type) {
+  const hints = {
+    'قرض': 'مثال: راتبي 8000 وأبي قرض سيارة بـ 60,000 ريال...',
+    'ماذا لو': 'مثال: ماذا لو تركت وظيفتي؟ أو ماذا لو ارتفع إيجاري؟ أو أي سيناريو تريده...'
+  };
+  inputEl.placeholder = hints[type] || 'اكتب سؤالك هنا...';
+  inputEl.focus();
+}
+
+function quickAsk(text) {
+  inputEl.value = text;
+  sendMessage();
+}
+
+function appendUserMessage(text, imgSrc) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-avatar">👤</div><div class="msg-bubble">${imgSrc ? `<img src="${imgSrc}" class="img-preview"><br>` : ''}${text || ''}</div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function appendBotMessage(data) {
+  // Early warning
+  if (data.early_warning) {
+    const w = document.createElement('div');
+    w.className = 'early-warning';
+    w.innerHTML = '⚠️ ' + data.early_warning;
+    messagesEl.appendChild(w);
+  }
+  // Message
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  const msg = (data.message || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  div.innerHTML = `<div class="msg-avatar">🌱</div><div class="msg-bubble">${msg}</div>`;
+  messagesEl.appendChild(div);
+  // Stress indicator
+  if (data.stress_level) {
+    messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));
+  }
+  // Dashboard
+  if (data.has_data && data.data) {
+    messagesEl.appendChild(buildDashboard(data));
+  }
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function buildStressBar(level, reason) {
+  const levels = {
+    safe: { label: '🟢 مرتاح مالياً', color: 'var(--green)', segs: 1 },
+    watch: { label: '🟡 يحتاج انتباه', color: 'var(--yellow)', segs: 2 },
+    stress: { label: '🟠 ضغط مالي', color: 'var(--orange)', segs: 3 },
+    danger: { label: '🔴 خطر مالي', color: 'var(--red)', segs: 4 }
+  };
+  const l = levels[level] || levels.safe;
+  const colors = ['var(--green)', 'var(--yellow)', 'var(--orange)', 'var(--red)'];
+  let segsHTML = colors.map((c, i) =>
+    `<div class="stress-seg ${i < l.segs ? 'active' : 'inactive'}" style="background:${c}"></div>`
+  ).join('');
+  const wrap = document.createElement('div');
+  wrap.className = 'stress-bar';
+  wrap.innerHTML = `
+    <div class="stress-label">مؤشر الضغط المالي</div>
+    <div class="stress-track">${segsHTML}</div>
+    <div class="stress-info">
+      <div class="stress-status" style="color:${l.color}">${l.label}</div>
+      <div class="stress-reason">${reason || ''}</div>
+    </div>`;
+  return wrap;
+}
+
+function buildDashboard(data) {
+  const d = data.data;
+  const verdict = data.verdict;
+  const verdictLabels = { ok: '✅ تقدر براحة', warning: '⚠️ ممكن لكن انتبه', danger: '❌ لا تقدر الحين' };
+  const score = d.health_score || 0;
+  const scoreClass = verdict || 'ok';
+  const remaining = Math.max(0, d.remaining || 0);
+  let scoreLabel = score >= 70 ? 'صحة مالية ممتازة' : score >= 40 ? 'وضع مالي معقول' : 'وضع مالي يحتاج تحسين';
+
+  // Scenarios
+  let scenariosHTML = '';
+  if (data.scenarios && data.scenarios.length > 0) {
+    const riskMap = { low: 'best', medium: 'medium', high: 'risky' };
+    const rankIcon = { low: '✓', medium: '~', high: '!' };
+    const rows = data.scenarios.map((s, i) => {
+      const cls = riskMap[s.risk] || 'medium';
+      return `<div class="scenario-row ${cls}">
+        <div class="scenario-rank ${cls}">${rankIcon[s.risk] || i+1}</div>
+        <div class="scenario-info">
+          <div class="scenario-name">${s.label}</div>
+          <div class="scenario-detail">إجمالي: ${(s.total||0).toLocaleString()} ر | يتبقى: ${(s.remaining||0).toLocaleString()} ر</div>
+        </div>
+        <div class="scenario-amount">${(s.monthly||0).toLocaleString()}<br><span style="font-size:11px;font-weight:400;color:var(--muted)">ريال/شهر</span></div>
+      </div>`;
+    }).join('');
+    scenariosHTML = `<div class="scenarios-section"><div class="scenarios-title">📊 مقارنة الخيارات</div><div class="scenarios-grid">${rows}</div></div>`;
+  }
+
+  // Decision quality
+  let decisionHTML = '';
+  if (data.decision_quality) {
+    const dq = data.decision_quality;
+    const sr = dq.success_rate || 0;
+    const srClass = sr >= 70 ? 'ok' : sr >= 40 ? 'warning' : 'danger';
+    const goalW = Math.min(dq.goal_alignment || 0, 100);
+    decisionHTML = `<div class="decision-card">
+      <div class="decision-title">لوحة القرار الذكية</div>
+      <div class="success-rate">
+        <div class="success-num ${srClass}">${sr}%</div>
+        <div class="success-label">نسبة نجاح هذا القرار</div>
+      </div>
+      <div class="timeline-grid">
+        <div class="timeline-item"><div class="timeline-period">بعد 6 أشهر</div><div class="timeline-text">${dq.after_6_months||''}</div></div>
+        <div class="timeline-item"><div class="timeline-period">بعد سنة</div><div class="timeline-text">${dq.after_1_year||''}</div></div>
+      </div>
+      <div class="goal-align">
+        <span style="font-size:12px;color:var(--muted)">توافق مع هدفك</span>
+        <div class="goal-bar-wrap"><div class="goal-bar" style="width:${goalW}%"></div></div>
+        <div class="goal-pct">${goalW}%</div>
+      </div>
+    </div>`;
+  }
+
+  // Decision reasons
+  let reasonsHTML = '';
+  if (data.decision_reasons && data.decision_reasons.length > 0) {
+    const items = data.decision_reasons.map(r =>
+      `<div class="reason-item"><div class="reason-dot ${verdict==='ok'?'ok':''}"></div><div>${r}</div></div>`
+    ).join('');
+    reasonsHTML = `<div class="reasons-card"><div class="reasons-title">📋 أسباب هذا التقييم</div>${items}</div>`;
+  }
+
+  // Rescue plan
+  let rescueHTML = '';
+  if (data.rescue_plan && data.rescue_plan.length > 0) {
+    const steps = data.rescue_plan.map((s,i) =>
+      `<div class="rescue-step"><div class="step-num">${i+1}</div><div>${s}</div></div>`).join('');
+    rescueHTML = `<div class="rescue-card"><div class="rescue-title">🚨 خطة الإنقاذ</div>${steps}</div>`;
+  }
+
+  // Saudi comparison
+  let compHTML = '';
+  if (data.saudi_comparison && data.saudi_comparison.length > 0) {
+    const items = data.saudi_comparison.map(c => {
+      const w = Math.min(c.user_pct * 3, 100);
+      return `<div class="comparison-item">
+        <div class="cmp-label">${c.category}</div>
+        <div class="cmp-bar-wrap"><div class="cmp-bar ${c.status}" style="width:${w}%"></div></div>
+        <div class="cmp-pct">${c.user_pct}%</div>
+        <div class="cmp-status ${c.status}">${c.status==='good'?'✓':'↑'}</div>
+      </div>`;
+    }).join('');
+    compHTML = `<div class="comparison-section"><div class="comparison-title">مقارنة مع معدل السعوديين</div>${items}</div>`;
+  }
+
+  const canvasId = 'chart_' + Date.now();
+  const dash = document.createElement('div');
+  dash.className = 'dashboard';
+  dash.innerHTML = `
+    <div class="dash-title">📈 لوحة التحكم المالية</div>
+    <div class="health-row">
+      <div class="score-circle ${scoreClass}">${score}</div>
+      <div class="score-info"><h3>${scoreLabel}</h3><p>مؤشر الصحة المالية من 100</p></div>
+    </div>
+    ${verdict ? `<div class="verdict-badge ${verdict}">${verdictLabels[verdict]}</div>` : ''}
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">الدخل</div><div class="stat-value">${(d.income||0).toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">المصروفات</div><div class="stat-value">${(d.expenses||0).toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">المدخرات</div><div class="stat-value positive">${(d.savings||0).toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">القسط الجديد</div><div class="stat-value">${(d.new_payment||0).toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">المتبقي</div><div class="stat-value ${remaining>0?'positive':'negative'}">${remaining.toLocaleString()} ر</div></div>
+      <div class="stat-card"><div class="stat-label">نسبة الادخار</div><div class="stat-value ${(d.savings_rate||0)>=20?'positive':'negative'}">${d.savings_rate||0}%</div></div>
+    </div>
+    <div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>
+    ${decisionHTML}${reasonsHTML}${scenariosHTML}${compHTML}${rescueHTML}
+  `;
+
+  setTimeout(() => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['المصروفات', 'المدخرات', 'القسط الجديد', 'المتبقي'],
+        datasets: [{
+          data: [d.expenses||0, d.savings||0, d.new_payment||0, remaining],
+          backgroundColor: ['#1B2A4A', '#00A651', '#8a9bbf', '#FAE8E0'],
+          borderWidth: 0, hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { family: 'Tajawal', size: 11 }, padding: 12 } } },
+        cutout: '60%'
+      }
+    });
+  }, 150);
+
+  return dash;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'typing'; div.id = 'typing';
+  div.innerHTML = `<div class="typing-avatar">🌱</div><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function removeTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+async function handleImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64 = e.target.result.split(',')[1];
+    const imgSrc = e.target.result;
+    appendUserMessage('📄 وثيقة مالية للتحليل', imgSrc);
+    sendBtn.disabled = true; showTyping();
+    try {
+      const res = await fetch('/analyze-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, media_type: file.type })
+      });
+      const data = await res.json();
+      removeTyping();
+      conversationHistory.push({ role: 'user', content: 'حللت وثيقة مالية' });
+      conversationHistory.push({ role: 'assistant', content: data.message || '' });
+      appendBotMessage(data);
+    } catch (err) {
+      removeTyping();
+      appendBotMessage({ message: '⚠️ حدث خطأ في تحليل الوثيقة.' });
+    }
+    sendBtn.disabled = false;
+    event.target.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+  appendUserMessage(text);
+  conversationHistory.push({ role: 'user', content: text });
+  inputEl.value = ''; inputEl.style.height = 'auto';
+  sendBtn.disabled = true; showTyping();
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: conversationHistory, profile: userProfile })
+    });
+    const data = await res.json();
+    removeTyping();
+    conversationHistory.push({ role: 'assistant', content: data.message || '' });
+    appendBotMessage(data);
+  } catch (err) {
+    removeTyping();
+    appendBotMessage({ message: '⚠️ حدث خطأ في الاتصال. تأكد من تشغيل السيرفر وحاول مجدداً.', has_data: false });
+  }
+  sendBtn.disabled = false; inputEl.focus();
+}
+</script>
+</body>
+</html>
