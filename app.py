@@ -94,7 +94,7 @@ def chat():
             profile_context = f"\n\nمعلومات المستخدم:\n- هدفه المالي: {goal}\n- نطاق دخله: {income_range}\nخصص ردك بناءً على هدفه."
     
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-haiku-4-5-20251001",
         max_tokens=1500,
         system=SYSTEM_PROMPT + profile_context,
         messages=messages
@@ -121,7 +121,7 @@ def analyze_image():
     image_data = data.get('image')
     media_type = data.get('media_type', 'image/jpeg')
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-haiku-4-5-20251001",
         max_tokens=1500,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": [
