@@ -50,7 +50,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);m
 header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
 .logo{display:flex;align-items:center;gap:12px;margin-bottom:2px;}
 .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--navy),var(--navy-dark));border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(27,42,74,0.2);}
-.logo h1{font-size:28px;font-weight:800;color:var(--navy);}
+.logo h1{font-size:28px;font-weight:800;color:#ffffff;}
 .tagline{color:#ffffff;font-size:13px;margin-right:56px;}
 .powered{display:flex;align-items:center;gap:6px;margin-top:3px;margin-right:56px;}
 .powered span{font-size:11px;color:var(--muted);}
@@ -65,8 +65,9 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
 .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .quick-card{background:var(--beige);border:1px solid rgba(250,232,224,0.3);border-radius:14px;padding:12px;cursor:pointer;text-align:center;transition:all 0.2s;}
 .quick-card:hover{border-color:var(--beige);transform:translateY(-1px);}
-.quick-card .q-icon{font-size:22px;margin-bottom:4px;}
-.quick-card .q-label{font-size:12px;font-weight:600;color:var(--navy);}
+.quick-card .q-icon{margin-bottom:8px;display:flex;justify-content:center;}
+.quick-card .q-icon svg{width:28px;height:28px;stroke:#02141E;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.quick-card .q-label{font-size:12px;font-weight:600;color:#02141E;}
 /* Chat */
 .chat-wrap{width:100%;max-width:780px;margin:0 auto;flex:1;display:flex;flex-direction:column;padding:0 16px;}
 #messages{flex:1;display:flex;flex-direction:column;gap:16px;padding:12px 0 24px;min-height:200px;}
@@ -168,6 +169,40 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
 .cmp-status{font-size:12px;font-weight:700;width:20px;}
 .cmp-status.good{color:var(--green);}
 .cmp-status.bad{color:var(--red);}
+/* Loan details */
+.loan-card{background:var(--beige);border-radius:14px;padding:16px;margin-top:14px;}
+.loan-title{font-size:12px;font-weight:700;color:#02141E;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;}
+.loan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.loan-item{background:rgba(2,20,30,0.06);border-radius:10px;padding:10px 12px;}
+.loan-item-label{font-size:10px;color:rgba(2,20,30,0.5);margin-bottom:3px;}
+.loan-item-value{font-size:15px;font-weight:800;color:#02141E;}
+.loan-approval{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-top:8px;}
+.loan-approval.approved{background:rgba(0,166,81,0.12);}
+.loan-approval.rejected{background:rgba(229,62,62,0.1);}
+.loan-approval.partial{background:rgba(214,158,46,0.1);}
+.loan-approval-text{font-size:13px;font-weight:600;}
+.loan-approval.approved .loan-approval-text{color:var(--green);}
+.loan-approval.rejected .loan-approval-text{color:var(--red);}
+.loan-approval.partial .loan-approval-text{color:var(--yellow);}
+/* Plans */
+.plans-wrap{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.plan-card{border-radius:14px;padding:14px;}
+.plan-a{background:rgba(0,166,81,0.08);border:1px solid rgba(0,166,81,0.2);}
+.plan-b{background:rgba(213,140,121,0.08);border:1px solid rgba(213,140,121,0.2);}
+.plan-title{font-size:13px;font-weight:700;margin-bottom:10px;}
+.plan-a .plan-title{color:var(--green);}
+.plan-b .plan-title{color:#D58C79;}
+.plan-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px;color:#02141E;}
+.plan-num{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff;}
+.plan-a .plan-num{background:var(--green);}
+.plan-b .plan-num{background:#D58C79;}
+.plan-outcome{font-size:12px;font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.06);}
+.plan-a .plan-outcome{color:var(--green);}
+.plan-b .plan-outcome{color:#D58C79;}
+/* Quick replies */
+.quick-replies{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-right:44px;}
+.quick-reply-btn{background:rgba(213,140,121,0.1);border:1.5px solid rgba(213,140,121,0.3);border-radius:20px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;color:#D58C79;cursor:pointer;transition:all 0.2s;font-weight:600;}
+.quick-reply-btn:hover{background:rgba(213,140,121,0.2);border-color:#D58C79;}
 /* Typing */
 .typing{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
 .typing-avatar{width:32px;height:32px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
@@ -211,12 +246,12 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
   <div class="ob-step active" id="step0">
     <div class="ob-question">🎯 ما هدفك المالي الرئيسي؟</div>
     <div class="ob-grid">
-      <div class="ob-card" onclick="selectGoal(this,'شراء منزل')"><div class="icon">🏠</div><div class="label">شراء منزل</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'شراء سيارة')"><div class="icon">🚗</div><div class="label">شراء سيارة</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الزواج')"><div class="icon">💍</div><div class="label">الزواج</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'السفر')"><div class="icon">✈️</div><div class="label">السفر</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الاستثمار')"><div class="icon">📈</div><div class="label">الاستثمار</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الادخار العام')"><div class="icon">💰</div><div class="label">الادخار</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'شراء منزل')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="label">شراء منزل</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'شراء سيارة')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M17 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M5 17H3V13L6 6h12l3 7v4h-2M9 17h6"/></svg></div><div class="label">شراء سيارة</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الزواج')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="6"/><path d="M8 10l1.5-4h5L16 10"/><path d="M8 10h8"/><polygon points="10,10 12,7 14,10 12,8.5"/></svg></div><div class="label">الزواج</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'السفر')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div><div class="label">السفر</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الاستثمار')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div class="label">الاستثمار</div></div>
+      <div class="ob-card" onclick="selectGoal(this,'الادخار العام')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4z"/></svg></div><div class="label">الادخار</div></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px;">
       <input type="text" id="customGoal" placeholder="هدف آخر..." style="flex:1;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:var(--beige);font-family:'Tajawal',sans-serif;font-size:14px;outline:none;" oninput="handleCustomGoal(this.value)">
@@ -254,9 +289,18 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
   <div id="quick-actions">
     <div class="quick-title">ابدأ من هنا</div>
     <div class="quick-grid">
-      <div class="quick-card" onclick="quickAsk('أريد تحليل وضعي المالي الحالي')"><div class="q-icon">📊</div><div class="q-label">تحليل وضعي</div></div>
-      <div class="quick-card" onclick="openFreeInput('قرض')"><div class="q-icon">🏦</div><div class="q-label">استشارة قرض</div></div>
-      <div class="quick-card" onclick="openFreeInput('ماذا لو')"><div class="q-icon">🔮</div><div class="q-label">ماذا لو؟</div></div>
+      <div class="quick-card" onclick="quickAsk('أريد تحليل وضعي المالي الحالي')">
+        <div class="q-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7h-7z" stroke-dasharray="2 2"/></svg></div>
+        <div class="q-label">تحليل وضعي</div>
+      </div>
+      <div class="quick-card" onclick="openFreeInput('قرض')">
+        <div class="q-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="q-label">استشارة قرض</div>
+      </div>
+      <div class="quick-card" onclick="openFreeInput('ماذا لو')">
+        <div class="q-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+        <div class="q-label">ماذا لو؟</div>
+      </div>
     </div>
   </div>
 
@@ -351,12 +395,21 @@ function startApp() {
   };
 
   const quicks = goalQuicks[userProfile.goal] || goalQuicks['default'];
+  const goalIcons = {
+    'شراء منزل': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    'شراء سيارة': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="11" width="22" height="9" rx="2"/><path d="M5 11l2-5h10l2 5"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
+    'default_analyze': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7h-7z"/></svg>',
+    'loan': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    'whatif': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>'
+  };
+
   const grid = document.querySelector('.quick-grid');
-  grid.innerHTML = quicks.map(q =>
-    q.type
-      ? `<div class="quick-card" onclick="openFreeInput('${q.type}')"><div class="q-icon">${q.icon}</div><div class="q-label">${q.label}</div></div>`
-      : `<div class="quick-card" onclick="quickAsk('${q.msg}')"><div class="q-icon">${q.icon}</div><div class="q-label">${q.label}</div></div>`
-  ).join('');
+  grid.innerHTML = quicks.map(q => {
+    let icon = q.type === 'قرض' ? goalIcons.loan : q.type === 'ماذا لو' ? goalIcons.whatif : (goalIcons[userProfile.goal] || goalIcons.default_analyze);
+    return q.type
+      ? `<div class="quick-card" onclick="openFreeInput('${q.type}')"><div class="q-icon">${icon}</div><div class="q-label">${q.label}</div></div>`
+      : `<div class="quick-card" onclick="quickAsk('${q.msg}')"><div class="q-icon">${goalIcons.default_analyze}</div><div class="q-label">${q.label}</div></div>`;
+  }).join('');
 
   setTimeout(() => {
     appendBotMessage({
@@ -403,28 +456,34 @@ function appendUserMessage(text, imgSrc) {
 }
 
 function appendBotMessage(data) {
-  // Early warning
   if (data.early_warning) {
     const w = document.createElement('div');
     w.className = 'early-warning';
     w.innerHTML = '⚠️ ' + data.early_warning;
     messagesEl.appendChild(w);
   }
-  // Message
   const div = document.createElement('div');
   div.className = 'msg bot';
   const msg = (data.message || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   div.innerHTML = `<div class="msg-avatar">🌱</div><div class="msg-bubble">${msg}</div>`;
   messagesEl.appendChild(div);
-  // Stress indicator
-  if (data.stress_level) {
-    messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));
+  if (data.quick_replies && data.quick_replies.length > 0) {
+    const qr = document.createElement('div');
+    qr.className = 'quick-replies';
+    qr.innerHTML = data.quick_replies.map(r =>
+      `<button class="quick-reply-btn" onclick="sendQuickReply(this,'${r}')">${r}</button>`
+    ).join('');
+    messagesEl.appendChild(qr);
   }
-  // Dashboard
-  if (data.has_data && data.data) {
-    messagesEl.appendChild(buildDashboard(data));
-  }
+  if (data.stress_level) messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));
+  if (data.has_data && data.data) messagesEl.appendChild(buildDashboard(data));
   messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function sendQuickReply(btn, text) {
+  document.querySelectorAll('.quick-reply-btn').forEach(b => b.disabled = true);
+  inputEl.value = text;
+  sendMessage();
 }
 
 function buildStressBar(level, reason) {
@@ -523,20 +582,46 @@ function buildDashboard(data) {
     rescueHTML = `<div class="rescue-card"><div class="rescue-title">🚨 خطة الإنقاذ</div>${steps}</div>`;
   }
 
-  // Saudi comparison
-  let compHTML = '';
-  if (data.saudi_comparison && data.saudi_comparison.length > 0) {
-    const items = data.saudi_comparison.map(c => {
-      const w = Math.min(c.user_pct * 3, 100);
-      return `<div class="comparison-item">
-        <div class="cmp-label">${c.category}</div>
-        <div class="cmp-bar-wrap"><div class="cmp-bar ${c.status}" style="width:${w}%"></div></div>
-        <div class="cmp-pct">${c.user_pct}%</div>
-        <div class="cmp-status ${c.status}">${c.status==='good'?'✓':'↑'}</div>
-      </div>`;
-    }).join('');
-    compHTML = `<div class="comparison-section"><div class="comparison-title">مقارنة مع معدل السعوديين</div>${items}</div>`;
+  // Loan details
+  let loanHTML = '';
+  if (data.loan_details) {
+    const l = data.loan_details;
+    const apStatus = l.approval_status || 'partial';
+    const apLabel = apStatus === 'approved' ? '✅ مؤهل للحصول على القرض' : apStatus === 'rejected' ? '❌ غير مؤهل حالياً' : '⚠️ مؤهل جزئياً';
+    loanHTML = `<div class="loan-card">
+      <div class="loan-title">تفاصيل القرض</div>
+      <div class="loan-grid">
+        <div class="loan-item"><div class="loan-item-label">مبلغ القرض</div><div class="loan-item-value">${(l.amount||0).toLocaleString()} ر</div></div>
+        <div class="loan-item"><div class="loan-item-label">القسط الشهري</div><div class="loan-item-value">${(l.monthly_payment||0).toLocaleString()} ر</div></div>
+        <div class="loan-item"><div class="loan-item-label">الرسوم الإدارية</div><div class="loan-item-value">${(l.admin_fee||0).toLocaleString()} ر</div></div>
+        <div class="loan-item"><div class="loan-item-label">إجمالي الفوائد</div><div class="loan-item-value">${(l.interest_total||0).toLocaleString()} ر</div></div>
+        <div class="loan-item"><div class="loan-item-label">إجمالي المدفوع</div><div class="loan-item-value">${(l.total_paid||0).toLocaleString()} ر</div></div>
+        <div class="loan-item"><div class="loan-item-label">أقصى مبلغ مؤهل</div><div class="loan-item-value">${(l.max_eligible||0).toLocaleString()} ر</div></div>
+      </div>
+      <div class="loan-approval ${apStatus}">
+        <div class="loan-approval-text">${apLabel}</div>
+      </div>
+      ${l.approval_reason ? `<div style="font-size:12px;color:rgba(2,20,30,0.6);margin-top:8px;">${l.approval_reason}</div>` : ''}
+    </div>`;
   }
+
+  // Plan A & B
+  let plansHTML = '';
+  if (data.plan_a || data.plan_b) {
+    let pA = '', pB = '';
+    if (data.plan_a) {
+      const steps = (data.plan_a.steps||[]).map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
+      pA = `<div class="plan-card plan-a"><div class="plan-title">🟢 ${data.plan_a.title||'خطة أ'}</div>${steps}<div class="plan-outcome">${data.plan_a.outcome||''}</div></div>`;
+    }
+    if (data.plan_b) {
+      const steps = (data.plan_b.steps||[]).map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
+      const tradeoffs = (data.plan_b.tradeoffs||[]).map(t => `<div class="plan-tradeoff">• ${t}</div>`).join('');
+      pB = `<div class="plan-card plan-b"><div class="plan-title">🟡 ${data.plan_b.title||'خطة ب'}</div>${steps}<div class="plan-outcome">${data.plan_b.outcome||''}</div>${tradeoffs}</div>`;
+    }
+    plansHTML = `<div class="plans-wrap">${pA}${pB}</div>`;
+  }
+
+  let compHTML = '';
 
   const canvasId = 'chart_' + Date.now();
   const dash = document.createElement('div');
@@ -557,7 +642,7 @@ function buildDashboard(data) {
       <div class="stat-card"><div class="stat-label">نسبة الادخار</div><div class="stat-value ${(d.savings_rate||0)>=20?'positive':'negative'}">${d.savings_rate||0}%</div></div>
     </div>
     <div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>
-    ${decisionHTML}${reasonsHTML}${scenariosHTML}${compHTML}${rescueHTML}
+    ${loanHTML}${plansHTML}${decisionHTML}${reasonsHTML}${scenariosHTML}${rescueHTML}
   `;
 
   setTimeout(() => {
