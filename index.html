@@ -10,8 +10,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#1B2A4A;--navy-dark:#142038;--navy-mid:#243558;--navy-light:#2d4270;
-  --beige:#FAE8E0;--beige-dark:#f0d8cc;--white:#fff;
-  --text:#FAE8E0;--muted:#8a9bbf;--border:rgba(250,232,224,0.12);
+  --beige:#FFA08C;--beige-dark:#f0d8cc;--white:#fff;
+  --text:#FFA08C;--muted:#8a9bbf;--border:rgba(250,232,224,0.12);
   --green:#00A651;--red:#e53e3e;--yellow:#d69e2e;--orange:#dd6b20;
 }
 body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
@@ -569,7 +569,7 @@ function buildDashboard(data) {
         labels: ['المصروفات', 'المدخرات', 'القسط الجديد', 'المتبقي'],
         datasets: [{
           data: [d.expenses||0, d.savings||0, d.new_payment||0, remaining],
-          backgroundColor: ['#1B2A4A', '#00A651', '#8a9bbf', '#FAE8E0'],
+          backgroundColor: ['#1B2A4A', '#00A651', '#8a9bbf', '#FFA08C'],
           borderWidth: 0, hoverOffset: 6
         }]
       },
