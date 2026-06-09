@@ -3,7 +3,7 @@ import anthropic
 import os
 
 app = Flask(__name__, static_folder='.')
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", "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"))
 
 SYSTEM_PROMPT = """أنت "نمو" — مستشار مالي ذكي متخصص في السوق السعودي، مدمج في تطبيق مصرف الإنماء.
 
