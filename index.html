@@ -835,7 +835,13 @@ async function sendMessage() {
     });
     const data = await res.json();
     removeTyping();
-    conversationHistory.push({ role: 'assistant', content: data.message || '' });
+    // نحفظ الرسالة النصية فقط في التاريخ، مو الـ JSON كامل
+    const assistantMsg = data.message || '';
+    conversationHistory.push({ role: 'assistant', content: assistantMsg });
+    // نحتفظ بآخر 20 رسالة فقط عشان ما تثقل المحادثة
+    if (conversationHistory.length > 20) {
+      conversationHistory = conversationHistory.slice(-20);
+    }
     appendBotMessage(data);
   } catch (err) {
     removeTyping();
