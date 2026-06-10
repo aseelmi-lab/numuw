@@ -4,8 +4,22 @@ import os
 import json
 import re
 
+# قراءة ملف env للمفتاح (يدعم env و .env)
+try:
+    from dotenv import load_dotenv
+    if os.path.exists('.env'):
+        load_dotenv('.env')
+    elif os.path.exists('env'):
+        load_dotenv('env')
+    else:
+        load_dotenv()
+except Exception:
+    pass
+
+API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+
 app = Flask(__name__, static_folder='.')
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", "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"))
+client = anthropic.Anthropic(api_key=API_KEY)
 
 SYSTEM_PROMPT = """أنت "نمو" — مستشار مالي ذكي متخصص في السوق السعودي، مدمج في تطبيق مصرف الإنماء.
 
@@ -24,43 +38,59 @@ SYSTEM_PROMPT = """أنت "نمو" — مستشار مالي ذكي متخصص �
 - يجب أن يكون الراتب موثقاً ومستمراً
 - السجل الائتماني يؤثر (افترض جيد ما لم يذكر خلافه)
 
-IMPORTANT: يجب أن يكون ردك JSON فقط وفقط. لا تكتب أي نص قبل أو بعد JSON. لا تستخدم ```json أو ``` أبداً. ابدأ ردك مباشرة بـ { وانهِه بـ }
+IMPORTANT: ردك يجب أن يكون JSON صالح فقط. ابدأ مباشرة بحرف { وانتهِ بحرف }. لا تكتب أي نص قبل أو بعد JSON. لا تستخدم backticks أو علامة ```json نهائياً. تأكد أن جميع النصوص داخل علامات تنصيص مزدوجة وأن JSON صالح للقراءة.
 
-الشكل المطلوب:
+الشكل المطلوب بالضبط:
 {"message":"ردك هنا","has_data":false,"early_warning":null,"stress_level":null,"stress_reason":null,"data":null,"verdict":null,"loan_details":null,"plan_a":null,"plan_b":null,"quick_replies":null,"decision_quality":null,"decision_reasons":null,"rescue_plan":null,"scenarios":null}
 
-عند وجود بيانات مالية كاملة استخدم has_data:true وأكمل حقل data.
-quick_replies: أضفها دائماً لو السؤال إجابته بسيطة.
-loan_details: أضفها كلما ذكر المستخدم قرضاً مع مبلغ ومدة.
-plan_a و plan_b: أضفهما بعد كل تحليل مالي كامل.
-لو معلومات ناقصة اسأل سؤالاً واحداً فقط."""
+شرح الحقول:
+- message: رسالتك النصية للمستخدم (مطلوب دائماً)
+- has_data: true عند وجود تحليل مالي كامل، وحينها املأ data بـ {income, expenses, savings, new_payment, remaining, debt_ratio, health_score, savings_rate}
+- early_warning: نص تحذير مبكر أو null
+- stress_level: "safe" أو "watch" أو "stress" أو "danger" أو null
+- stress_reason: سبب مستوى الضغط أو null
+- verdict: "ok" أو "warning" أو "danger" أو null
+- loan_details: عند ذكر قرض، املأ {amount, monthly_payment, total_paid, admin_fee, interest_total, approval_status, approval_reason, max_eligible}
+- plan_a: عند أي تحليل أو خطة، املأها كاملة بهذا الشكل {"title":"خطة أ — العنوان","steps":["خطوة 1 مفصلة","خطوة 2 مفصلة","خطوة 3 مفصلة"],"outcome":"النتيجة المتوقعة"}. يجب أن تحتوي steps على 3 خطوات على الأقل، ولا تتركها فارغة أبداً.
+- plan_b: بديل واقعي كامل {"title":"خطة ب — العنوان","steps":["خطوة 1","خطوة 2"],"outcome":"النتيجة","tradeoffs":["تضحية 1","تضحية 2"]}. يجب ملء steps دائماً.
+- decision_quality: عند تقييم أي قرار، املأها كاملة {"success_rate":رقم من 0 إلى 100,"after_6_months":"وصف الوضع بعد 6 أشهر","after_1_year":"وصف الوضع بعد سنة","goal_alignment":رقم من 0 إلى 100}. لا تترك success_rate صفراً إلا لو القرار فاشل فعلاً.
+- decision_reasons: قائمة أسباب التقييم
+- quick_replies: قائمة خيارات سريعة لو السؤال إجابته بسيطة
+- savings_rate: رقم فقط بدون علامة % (مثال: 24 وليس "24%")
+- لو معلومات ناقصة اسأل سؤالاً واحداً فقط
+- مهم جداً: عندما تذكر plan_a أو plan_b في ردك، يجب أن تملأ حقول steps بخطوات فعلية مفصلة، وليس قوائم فارغة"""
 
-EMPTY = {"message": "", "has_data": False, "early_warning": None, "stress_level": None,
-         "stress_reason": None, "data": None, "verdict": None, "loan_details": None,
-         "plan_a": None, "plan_b": None, "quick_replies": None, "decision_quality": None,
-         "decision_reasons": None, "rescue_plan": None, "scenarios": None}
+EMPTY = {
+    "message": "", "has_data": False, "early_warning": None,
+    "stress_level": None, "stress_reason": None, "data": None,
+    "verdict": None, "loan_details": None, "plan_a": None,
+    "plan_b": None, "quick_replies": None, "decision_quality": None,
+    "decision_reasons": None, "rescue_plan": None, "scenarios": None
+}
 
 def parse_response(raw):
-    raw = raw.strip()
-    # محاولة 1: JSON مباشر
+    """يحاول استخراج JSON صالح من رد الموديل بعدة طرق."""
+    raw = (raw or "").strip()
+    # طريقة 1: JSON مباشر
     try:
         return json.loads(raw)
-    except:
+    except Exception:
         pass
-    # محاولة 2: استخراج أول كتلة JSON
-    match = re.search(r'\{.*\}', raw, re.DOTALL)
-    if match:
-        try:
-            return json.loads(match.group())
-        except:
-            pass
-    # محاولة 3: إزالة code blocks
+    # طريقة 2: إزالة code blocks ثم محاولة
     cleaned = re.sub(r'```(?:json)?', '', raw).strip()
     try:
         return json.loads(cleaned)
-    except:
+    except Exception:
         pass
-    # fallback
+    # طريقة 3: استخراج أول وآخر قوس
+    start = cleaned.find('{')
+    end = cleaned.rfind('}')
+    if start != -1 and end != -1 and end > start:
+        try:
+            return json.loads(cleaned[start:end+1])
+        except Exception:
+            pass
+    # fallback: النص كرسالة عادية
     result = dict(EMPTY)
     result["message"] = raw
     return result
@@ -71,7 +101,7 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
+    data = request.json or {}
     messages = data.get('messages', [])
     user_profile = data.get('profile', {})
     profile_context = ""
@@ -91,12 +121,12 @@ def chat():
         parsed = parse_response(raw)
     except Exception as e:
         parsed = dict(EMPTY)
-        parsed["message"] = f"حدث خطأ في الاتصال: {str(e)}"
+        parsed["message"] = "⚠️ حدث خطأ في الاتصال. تأكد من إعداد المفتاح بشكل صحيح في ملف env وحاول مجدداً."
     return jsonify(parsed)
 
 @app.route('/analyze-image', methods=['POST'])
 def analyze_image():
-    data = request.json
+    data = request.json or {}
     image_data = data.get('image')
     media_type = data.get('media_type', 'image/jpeg')
     try:
@@ -113,8 +143,16 @@ def analyze_image():
         parsed = parse_response(raw)
     except Exception as e:
         parsed = dict(EMPTY)
-        parsed["message"] = f"حدث خطأ في تحليل الصورة: {str(e)}"
+        parsed["message"] = "⚠️ حدث خطأ في تحليل الصورة. حاول مرة أخرى."
     return jsonify(parsed)
 
 if __name__ == '__main__':
+    if not API_KEY:
+        print("\n" + "="*60)
+        print("⚠️  تنبيه: لم يتم العثور على المفتاح ANTHROPIC_API_KEY")
+        print("افتح ملف env وضع مفتاحك بهذا الشكل:")
+        print("ANTHROPIC_API_KEY=sk-ant-api03-...")
+        print("="*60 + "\n")
+    else:
+        print("\n✅ تم تحميل المفتاح بنجاح. التطبيق جاهز!\n")
     app.run(debug=True, port=5000)

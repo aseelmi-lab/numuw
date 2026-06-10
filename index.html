@@ -654,7 +654,7 @@ function buildDashboard(data) {
 
   // Decision quality
   let decisionHTML = '';
-  if (data.decision_quality) {
+  if (data.decision_quality && (data.decision_quality.success_rate || 0) > 0) {
     const dq = data.decision_quality;
     const sr = dq.success_rate || 0;
     const srClass = sr >= 70 ? 'ok' : sr >= 40 ? 'warning' : 'danger';
@@ -719,14 +719,16 @@ function buildDashboard(data) {
 
   // Plan A & B
   let plansHTML = '';
-  if (data.plan_a || data.plan_b) {
+  const hasA = data.plan_a && (data.plan_a.steps||[]).length > 0;
+  const hasB = data.plan_b && (data.plan_b.steps||[]).length > 0;
+  if (hasA || hasB) {
     let pA = '', pB = '';
-    if (data.plan_a) {
-      const steps = (data.plan_a.steps||[]).map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
+    if (hasA) {
+      const steps = data.plan_a.steps.map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
       pA = `<div class="plan-card plan-a"><div class="plan-title">🟢 ${data.plan_a.title||'خطة أ'}</div>${steps}<div class="plan-outcome">${data.plan_a.outcome||''}</div></div>`;
     }
-    if (data.plan_b) {
-      const steps = (data.plan_b.steps||[]).map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
+    if (hasB) {
+      const steps = data.plan_b.steps.map((s,i) => `<div class="plan-step"><div class="plan-num">${i+1}</div><div>${s}</div></div>`).join('');
       const tradeoffs = (data.plan_b.tradeoffs||[]).map(t => `<div class="plan-tradeoff">• ${t}</div>`).join('');
       pB = `<div class="plan-card plan-b"><div class="plan-title">🟡 ${data.plan_b.title||'خطة ب'}</div>${steps}<div class="plan-outcome">${data.plan_b.outcome||''}</div>${tradeoffs}</div>`;
     }
@@ -751,7 +753,7 @@ function buildDashboard(data) {
       <div class="stat-card"><div class="stat-label">المدخرات</div><div class="stat-value positive">${fmt(d.savings||0)}</div></div>
       <div class="stat-card"><div class="stat-label">القسط الجديد</div><div class="stat-value">${fmt(d.new_payment||0)}</div></div>
       <div class="stat-card"><div class="stat-label">المتبقي</div><div class="stat-value ${remaining>0?'positive':'negative'}">${fmt(remaining)}</div></div>
-      <div class="stat-card"><div class="stat-label">نسبة الادخار</div><div class="stat-value ${(d.savings_rate||0)>=20?'positive':'negative'}">${d.savings_rate||0}%</div></div>
+      <div class="stat-card"><div class="stat-label">نسبة الادخار</div><div class="stat-value ${(parseFloat(d.savings_rate)||0)>=20?'positive':'negative'}">${String(d.savings_rate||0).replace(/%/g,'')}%</div></div>
     </div>
     <div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>
     ${loanHTML}${plansHTML}${decisionHTML}${reasonsHTML}${scenariosHTML}${rescueHTML}
