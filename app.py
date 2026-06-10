@@ -4,15 +4,14 @@ import os
 import json
 import re
 
-# قراءة ملف env للمفتاح (يدعم env و .env)
+# قراءة ملف env للمفتاح (للتشغيل المحلي فقط)
+# على Render وغيره، المفتاح يجي من متغيرات البيئة مباشرة
 try:
     from dotenv import load_dotenv
-    if os.path.exists('.env'):
-        load_dotenv('.env')
-    elif os.path.exists('env'):
-        load_dotenv('env')
-    else:
-        load_dotenv()
+    for env_file in ['.env', 'env']:
+        if os.path.exists(env_file):
+            load_dotenv(env_file)
+            break
 except Exception:
     pass
 
@@ -120,6 +119,7 @@ def chat():
         raw = response.content[0].text.strip()
         parsed = parse_response(raw)
     except Exception as e:
+        print(f"❌ خطأ في /chat: {repr(e)}")  # يظهر في logs الخاص بـ Render
         parsed = dict(EMPTY)
         parsed["message"] = "⚠️ حدث خطأ في الاتصال. تأكد من إعداد المفتاح بشكل صحيح في ملف env وحاول مجدداً."
     return jsonify(parsed)
