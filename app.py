@@ -70,28 +70,50 @@ EMPTY = {
 def parse_response(raw):
     """يحاول استخراج JSON صالح من رد الموديل بعدة طرق."""
     raw = (raw or "").strip()
-    # طريقة 1: JSON مباشر
-    try:
-        return json.loads(raw)
-    except Exception:
-        pass
-    # طريقة 2: إزالة code blocks ثم محاولة
-    cleaned = re.sub(r'```(?:json)?', '', raw).strip()
+
+    # إزالة code blocks بكل أشكالها أول شي (```json ... ``` أو ``` ... ```)
+    cleaned = raw
+    if '```' in cleaned:
+        # نشيل ```json و ``` و ` المفردة
+        cleaned = re.sub(r'```\s*json', '', cleaned, flags=re.IGNORECASE)
+        cleaned = cleaned.replace('```', '')
+        cleaned = cleaned.strip()
+
+    # طريقة 1: JSON مباشر بعد التنظيف
     try:
         return json.loads(cleaned)
     except Exception:
         pass
-    # طريقة 3: استخراج أول وآخر قوس
+
+    # طريقة 2: المحاولة على النص الأصلي
+    try:
+        return json.loads(raw)
+    except Exception:
+        pass
+
+    # طريقة 3: استخراج أول { وآخر } من النص المنظّف
     start = cleaned.find('{')
     end = cleaned.rfind('}')
     if start != -1 and end != -1 and end > start:
+        candidate = cleaned[start:end+1]
         try:
-            return json.loads(cleaned[start:end+1])
+            return json.loads(candidate)
         except Exception:
             pass
-    # fallback: النص كرسالة عادية
+
+    # طريقة 4: نفس الشي على النص الأصلي
+    start = raw.find('{')
+    end = raw.rfind('}')
+    if start != -1 and end != -1 and end > start:
+        try:
+            return json.loads(raw[start:end+1])
+        except Exception:
+            pass
+
+    # fallback: لو فشل كل شي، نعرض النص كرسالة بعد تنظيفه من أي backticks
+    fallback_text = raw.replace('```json', '').replace('```', '').strip()
     result = dict(EMPTY)
-    result["message"] = raw
+    result["message"] = fallback_text
     return result
 
 @app.route('/')
@@ -119,9 +141,9 @@ def chat():
         raw = response.content[0].text.strip()
         parsed = parse_response(raw)
     except Exception as e:
-        print(f"❌ خطأ في /chat: {repr(e)}")  # يظهر في logs الخاص بـ Render
+        print(f"❌ خطأ في /chat: {repr(e)}")
         parsed = dict(EMPTY)
-        parsed["message"] = f"⚠️ خطأ تشخيصي: {str(e)[:200]}"
+        parsed["message"] = "عذراً، صار خلل بسيط. حاول مرة ثانية بعد لحظات. 🌱"
     return jsonify(parsed)
 
 @app.route('/analyze-image', methods=['POST'])

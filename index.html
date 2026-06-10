@@ -563,7 +563,17 @@ function appendBotMessage(data) {
   }
   const div = document.createElement('div');
   div.className = 'msg bot';
-  const msg = (data.message || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // شبكة أمان: لو وصل نص فيه JSON خام أو code blocks، ننظفه
+  let cleanMsg = (data.message || '');
+  // لو الرسالة كاملة JSON خام (تبدأ بـ { وفيها "message")، نحاول نستخرج message
+  if (cleanMsg.includes('```') || (cleanMsg.trim().startsWith('{') && cleanMsg.includes('"message"'))) {
+    cleanMsg = cleanMsg.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const m = cleanMsg.match(/"message"\s*:\s*"([^"]*)"/);
+    if (m && m[1]) {
+      cleanMsg = m[1];
+    }
+  }
+  const msg = cleanMsg.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   div.innerHTML = `<div class="msg-avatar">🌱</div><div class="msg-bubble">${msg}</div>`;
   messagesEl.appendChild(div);
   if (data.quick_replies && data.quick_replies.length > 0) {
