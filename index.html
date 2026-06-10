@@ -845,21 +845,23 @@ async function sendMessage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: conversationHistory, profile: userProfile })
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     removeTyping();
     // نحفظ الرسالة النصية فقط في التاريخ، مو الـ JSON كامل
     const assistantMsg = data.message || '';
     conversationHistory.push({ role: 'assistant', content: assistantMsg });
-    // نحتفظ بآخر 20 رسالة فقط عشان ما تثقل المحادثة
-    if (conversationHistory.length > 20) {
-      conversationHistory = conversationHistory.slice(-20);
+    // نحتفظ بآخر 12 رسالة فقط = رد أسرع وأخف على السيرفر
+    if (conversationHistory.length > 12) {
+      conversationHistory = conversationHistory.slice(-12);
     }
     appendBotMessage(data);
   } catch (err) {
     removeTyping();
-    appendBotMessage({ message: '⚠️ حدث خطأ في الاتصال. تأكد من تشغيل السيرفر وحاول مجدداً.', has_data: false });
+    appendBotMessage({ message: 'عذراً، تأخر الاتصال قليلاً. حاول مرة ثانية بعد لحظات. 🌱', has_data: false });
+  } finally {
+    sendBtn.disabled = false; inputEl.focus();
   }
-  sendBtn.disabled = false; inputEl.focus();
 }
 </script>
 </body>

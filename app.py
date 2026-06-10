@@ -18,7 +18,11 @@ except Exception:
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
 app = Flask(__name__, static_folder='.')
-client = anthropic.Anthropic(api_key=API_KEY)
+# timeout 60 ثانية + إعادة المحاولة مرة عند فشل الاتصال = أسرع وأثبت
+client = anthropic.Anthropic(api_key=API_KEY, timeout=60.0, max_retries=1)
+
+# الموديل المستخدم (متغير واحد عشان سهولة التعديل)
+MODEL = "claude-haiku-4-5-20251001"
 
 SYSTEM_PROMPT = """أنت "نمو" — مستشار مالي ذكي متخصص في السوق السعودي، مدمج في تطبيق مصرف الإنماء.
 
@@ -116,9 +120,16 @@ def parse_response(raw):
     result["message"] = fallback_text
     return result
 
+# تحميل صفحة index مرة وحدة في الذاكرة = تحميل أسرع للصفحة
+try:
+    with open('index.html', 'r', encoding='utf-8') as f:
+        INDEX_HTML = f.read()
+except Exception:
+    INDEX_HTML = "<h1>نمو</h1><p>الصفحة غير متوفرة</p>"
+
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return INDEX_HTML
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -133,8 +144,8 @@ def chat():
             profile_context = f"\n\nمعلومات المستخدم:\n- هدفه المالي: {goal}\n- نطاق دخله: {income_range}\nخصص ردك بناءً على هدفه."
     try:
         response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=2000,
+            model=MODEL,
+            max_tokens=1500,
             system=SYSTEM_PROMPT + profile_context,
             messages=messages
         )
@@ -153,8 +164,8 @@ def analyze_image():
     media_type = data.get('media_type', 'image/jpeg')
     try:
         response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=2000,
+            model=MODEL,
+            max_tokens=1500,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": [
                 {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_data}},
