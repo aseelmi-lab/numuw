@@ -121,7 +121,7 @@ def chat():
     except Exception as e:
         print(f"❌ خطأ في /chat: {repr(e)}")  # يظهر في logs الخاص بـ Render
         parsed = dict(EMPTY)
-        parsed["message"] = "⚠️ حدث خطأ في الاتصال. تأكد من إعداد المفتاح بشكل صحيح في ملف env وحاول مجدداً."
+        parsed["message"] = f"⚠️ خطأ تشخيصي: {str(e)[:200]}"
     return jsonify(parsed)
 
 @app.route('/analyze-image', methods=['POST'])
