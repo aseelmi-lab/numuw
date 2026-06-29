@@ -231,7 +231,7 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
 .typing{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
 .typing-avatar{width:32px;height:32px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .typing-bubble{background:rgba(250,232,224,0.08);border:1px solid rgba(250,232,224,0.12);border-radius:4px 18px 18px 18px;padding:14px 18px;display:flex;gap:5px;align-items:center;}
-.dot{width:6px;height:6px;background:var(--navy);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.4;}
+.dot{width:6px;height:6px;background:var(--beige);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.6;}
 .dot:nth-child(2){animation-delay:0.2s;}
 .dot:nth-child(3){animation-delay:0.4s;}
 /* Input */
@@ -471,7 +471,7 @@ function updateGoalTracker(savings) {
   const tracker = document.getElementById('goal-tracker');
   const goal = userProfile.goal;
   const target = goalTargets[goal] || 50000;
-  goalSaved += (savings || 0);
+  goalSaved = savings || 0;
   const pct = Math.min(Math.round((goalSaved / target) * 100), 100);
   const remaining = Math.max(target - goalSaved, 0);
   document.getElementById('gt-goal-name').textContent = goal;
@@ -549,7 +549,18 @@ function quickAsk(text) {
 function appendUserMessage(text, imgSrc) {
   const div = document.createElement('div');
   div.className = 'msg user';
-  div.innerHTML = `<div class="msg-avatar">👤</div><div class="msg-bubble">${imgSrc ? `<img src="${imgSrc}" class="img-preview"><br>` : ''}${text || ''}</div>`;
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  if (imgSrc) {
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.className = 'img-preview';
+    bubble.appendChild(img);
+    bubble.appendChild(document.createElement('br'));
+  }
+  if (text) bubble.appendChild(document.createTextNode(text));
+  div.innerHTML = '<div class="msg-avatar">👤</div>';
+  div.appendChild(bubble);
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
@@ -605,7 +616,9 @@ function appendBotMessage(data) {
 function sendQuickReply(btn, text) {
   document.querySelectorAll('.quick-reply-btn').forEach(b => b.disabled = true);
   inputEl.value = text;
-  sendMessage();
+  sendMessage().finally(() => {
+    document.querySelectorAll('.quick-reply-btn').forEach(b => b.disabled = false);
+  });
 }
 
 function buildStressBar(level, reason) {

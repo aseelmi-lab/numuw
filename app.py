@@ -75,10 +75,9 @@ def parse_response(raw):
     """يحاول استخراج JSON صالح من رد الموديل بعدة طرق."""
     raw = (raw or "").strip()
 
-    # إزالة code blocks بكل أشكالها أول شي (```json ... ``` أو ``` ... ```)
+    # إزالة code blocks بكل أشكالها أول شي
     cleaned = raw
     if '```' in cleaned:
-        # نشيل ```json و ``` و ` المفردة
         cleaned = re.sub(r'```\s*json', '', cleaned, flags=re.IGNORECASE)
         cleaned = cleaned.replace('```', '')
         cleaned = cleaned.strip()
@@ -114,7 +113,20 @@ def parse_response(raw):
         except Exception:
             pass
 
-    # fallback: لو فشل كل شي، نعرض النص كرسالة بعد تنظيفه من أي backticks
+    # طريقة 5: استخراج message بـ regex متقدم يدعم escaped chars
+    # يدعم escaped quotes داخل القيمة مثل: "message":"قال \"كذا\" وكذا"
+    m = re.search(r'"message"\s*:\s*"((?:[^"\\]|\\.)*)"', cleaned or raw)
+    if m:
+        try:
+            # نفك الـ escape sequences بشكل صحيح
+            msg_value = m.group(1).encode('utf-8').decode('unicode_escape', errors='replace')
+        except Exception:
+            msg_value = m.group(1)
+        result = dict(EMPTY)
+        result["message"] = msg_value
+        return result
+
+    # fallback: نعرض النص كرسالة بعد تنظيفه
     fallback_text = raw.replace('```json', '').replace('```', '').strip()
     result = dict(EMPTY)
     result["message"] = fallback_text
@@ -149,6 +161,8 @@ def chat():
             system=SYSTEM_PROMPT + profile_context,
             messages=messages
         )
+        if not response.content:
+            raise ValueError("استجابة فارغة من الموديل")
         raw = response.content[0].text.strip()
         parsed = parse_response(raw)
     except Exception as e:
@@ -172,9 +186,12 @@ def analyze_image():
                 {"type": "text", "text": "حلل هذه الوثيقة المالية واستخرج منها جميع الأرقام والمعلومات"}
             ]}]
         )
+        if not response.content:
+            raise ValueError("استجابة فارغة من الموديل")
         raw = response.content[0].text.strip()
         parsed = parse_response(raw)
     except Exception as e:
+        print(f"❌ خطأ في /analyze-image: {repr(e)}")
         parsed = dict(EMPTY)
         parsed["message"] = "⚠️ حدث خطأ في تحليل الصورة. حاول مرة أخرى."
     return jsonify(parsed)
