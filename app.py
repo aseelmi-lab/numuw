@@ -118,11 +118,14 @@ def parse_response(raw):
     # يدعم escaped quotes داخل القيمة مثل: "message":"قال \"كذا\" وكذا"
     m = re.search(r'"message"\s*:\s*"((?:[^"\\]|\\.)*)"', cleaned or raw)
     if m:
+        raw_value = m.group(1)
+        # نحاول نفك الـ JSON escape sequences (\n, \", \u0645...) بطريقة آمنة
+        # عن طريق تغليف القيمة كـ JSON string صالح وتمريرها لـ json.loads
         try:
-            # نفك الـ escape sequences بشكل صحيح
-            msg_value = m.group(1).encode('utf-8').decode('unicode_escape', errors='replace')
+            msg_value = json.loads('"' + raw_value + '"')
         except Exception:
-            msg_value = m.group(1)
+            # لو فشل، النص على الأرجح عربي عادي بدون escape حقيقي، نتركه كما هو
+            msg_value = raw_value
         result = dict(EMPTY)
         result["message"] = msg_value
         return result
