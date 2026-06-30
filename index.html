@@ -815,7 +815,7 @@ async function handleImage(event) {
       const res = await fetch('/analyze-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, media_type: file.type })
+        body: JSON.stringify({ image: base64, media_type: file.type, profile: userProfile })
       });
       const data = await res.json();
       removeTyping();

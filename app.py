@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import anthropic
 import os
 import json
 import re
+import socket
 
 # قراءة ملف env للمفتاح (للتشغيل المحلي فقط)
 # على Render وغيره، المفتاح يجي من متغيرات البيئة مباشرة
@@ -19,10 +20,8 @@ API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
 app = Flask(__name__, static_folder='.')
 app.config['JSON_AS_ASCII'] = False
-# timeout 60 ثانية + إعادة المحاولة مرة عند فشل الاتصال = أسرع وأثبت
-client = anthropic.Anthropic(api_key=API_KEY, timeout=60.0, max_retries=1)
+client = anthropic.Anthropic(api_key=API_KEY, timeout=60.0, max_retries=2)
 
-# الموديل المستخدم (متغير واحد عشان سهولة التعديل)
 MODEL = "claude-haiku-4-5-20251001"
 
 SYSTEM_PROMPT = """أنت "نمو" — مستشار مالي ذكي متخصص في السوق السعودي، مدمج في تطبيق مصرف الإنماء.
@@ -72,80 +71,72 @@ EMPTY = {
     "decision_reasons": None, "rescue_plan": None, "scenarios": None
 }
 
+
 def parse_response(raw):
     """يحاول استخراج JSON صالح من رد الموديل بعدة طرق."""
     raw = (raw or "").strip()
 
-    # إزالة code blocks بكل أشكالها أول شي
     cleaned = raw
     if '```' in cleaned:
         cleaned = re.sub(r'```\s*json', '', cleaned, flags=re.IGNORECASE)
         cleaned = cleaned.replace('```', '')
         cleaned = cleaned.strip()
 
-    # طريقة 1: JSON مباشر بعد التنظيف
     try:
         return json.loads(cleaned)
     except Exception:
         pass
 
-    # طريقة 2: المحاولة على النص الأصلي
     try:
         return json.loads(raw)
     except Exception:
         pass
 
-    # طريقة 3: استخراج أول { وآخر } من النص المنظّف
     start = cleaned.find('{')
     end = cleaned.rfind('}')
     if start != -1 and end != -1 and end > start:
-        candidate = cleaned[start:end+1]
+        candidate = cleaned[start:end + 1]
         try:
             return json.loads(candidate)
         except Exception:
             pass
 
-    # طريقة 4: نفس الشي على النص الأصلي
     start = raw.find('{')
     end = raw.rfind('}')
     if start != -1 and end != -1 and end > start:
         try:
-            return json.loads(raw[start:end+1])
+            return json.loads(raw[start:end + 1])
         except Exception:
             pass
 
-    # طريقة 5: استخراج message بـ regex متقدم يدعم escaped chars
-    # يدعم escaped quotes داخل القيمة مثل: "message":"قال \"كذا\" وكذا"
     m = re.search(r'"message"\s*:\s*"((?:[^"\\]|\\.)*)"', cleaned or raw)
     if m:
         raw_value = m.group(1)
-        # نحاول نفك الـ JSON escape sequences (\n, \", \u0645...) بطريقة آمنة
-        # عن طريق تغليف القيمة كـ JSON string صالح وتمريرها لـ json.loads
         try:
             msg_value = json.loads('"' + raw_value + '"')
         except Exception:
-            # لو فشل، النص على الأرجح عربي عادي بدون escape حقيقي، نتركه كما هو
             msg_value = raw_value
         result = dict(EMPTY)
         result["message"] = msg_value
         return result
 
-    # fallback: نعرض النص كرسالة بعد تنظيفه
     fallback_text = raw.replace('```json', '').replace('```', '').strip()
     result = dict(EMPTY)
     result["message"] = fallback_text
     return result
 
-# تحميل صفحة index مرة وحدة في الذاكرة = تحميل أسرع للصفحة
+
 try:
     with open('index.html', 'r', encoding='utf-8') as f:
         INDEX_HTML = f.read()
 except Exception:
     INDEX_HTML = "<h1>نمو</h1><p>الصفحة غير متوفرة</p>"
 
+
 @app.route('/')
 def index():
     return INDEX_HTML
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -175,6 +166,7 @@ def chat():
         parsed["message"] = "عذراً، صار خلل بسيط. حاول مرة ثانية بعد لحظات. 🌱"
     return jsonify(parsed)
 
+
 @app.route('/analyze-image', methods=['POST'])
 def analyze_image():
     data = request.json or {}
@@ -200,14 +192,61 @@ def analyze_image():
         parsed["message"] = "⚠️ حدث خطأ في تحليل الصورة. حاول مرة أخرى."
     return jsonify(parsed)
 
+
+def network_diagnostic():
+    """يفحص الاتصال بسيرفرات Anthropic قبل بدء التطبيق ويطبع تشخيص واضح."""
+    print("\n" + "=" * 60)
+    print("🔍 فحص الاتصال بسيرفرات Anthropic...")
+    print("=" * 60)
+
+    # 1) فحص DNS + TCP الأساسي (بدون TLS)
+    try:
+        sock = socket.create_connection(("api.anthropic.com", 443), timeout=8)
+        sock.close()
+        print("✅ الاتصال الأساسي (TCP) بـ api.anthropic.com:443 ناجح")
+    except Exception as e:
+        print(f"❌ فشل الاتصال الأساسي (TCP): {repr(e)}")
+        print("   السبب الأرجح: فايروول أو شبكة تحجب المنفذ 443 كلياً.")
+        print("=" * 60 + "\n")
+        return
+
+    # 2) فحص TLS/HTTPS الفعلي عبر مكتبة anthropic نفسها
+    if not API_KEY:
+        print("⚠️  لا يوجد مفتاح API للاختبار، تخطي فحص TLS.")
+        print("=" * 60 + "\n")
+        return
+
+    try:
+        test_client = anthropic.Anthropic(api_key=API_KEY, timeout=15.0, max_retries=0)
+        test_client.messages.create(
+            model=MODEL,
+            max_tokens=10,
+            messages=[{"role": "user", "content": "hi"}]
+        )
+        print("✅ تم الاتصال بنجاح والمفتاح صالح! التطبيق جاهز تماماً.")
+    except anthropic.AuthenticationError:
+        print("❌ المفتاح مرفوض (AuthenticationError) — المفتاح خاطئ أو منتهي.")
+        print("   راجعي console.anthropic.com/settings/keys وتأكدي من نسخ المفتاح كاملاً.")
+    except anthropic.APIConnectionError as e:
+        print(f"❌ فشل الاتصال أثناء TLS handshake: {repr(e)}")
+        print("   السبب الأرجح: برنامج حماية/فايروول يفحص أو يقطع حركة HTTPS الصادرة من Python.")
+        print("   جربي: تعطيل Windows Defender Real-time protection مؤقتاً، أو إضافة استثناء لـ python.exe.")
+    except Exception as e:
+        print(f"❌ خطأ غير متوقع أثناء الفحص: {repr(e)}")
+
+    print("=" * 60 + "\n")
+
+
 if __name__ == '__main__':
     if not API_KEY:
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("⚠️  تنبيه: لم يتم العثور على المفتاح ANTHROPIC_API_KEY")
         print("افتح ملف env وضع مفتاحك بهذا الشكل:")
         print("ANTHROPIC_API_KEY=sk-ant-api03-...")
-        print("="*60 + "\n")
+        print("=" * 60 + "\n")
     else:
-        print("\n✅ تم تحميل المفتاح بنجاح. التطبيق جاهز!\n")
+        print("\n✅ تم تحميل المفتاح بنجاح.\n")
+        network_diagnostic()
+
     port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=False, host='0.0.0.0', port=port)
