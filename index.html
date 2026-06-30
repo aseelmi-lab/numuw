@@ -10,247 +10,262 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#02141E;--navy-dark:#011018;--navy-mid:#0a2030;--navy-light:#0d2a40;
-  --beige:#D58C79;--beige-dark:#f0d8cc;--white:#fff;
+  --beige:#D58C79;--beige-dark:#f0d8cc;--beige-soft:#f0a98c;--white:#fff;
   --text:#D58C79;--muted:#8a9bbf;--border:rgba(250,232,224,0.12);
-  --green:#00A651;--red:#e53e3e;--yellow:#d69e2e;--orange:#dd6b20;
+  --green:#00A651;--green-soft:#4ade80;--red:#e53e3e;--yellow:#d69e2e;--orange:#dd6b20;
+  --card:#0a2030;--card-2:#0d2a40;
 }
-body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
+body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
 /* ===== ONBOARDING ===== */
-#onboarding{position:fixed;inset:0;background:var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity 0.5s;}
+#onboarding{position:fixed;inset:0;background:radial-gradient(circle at 50% -10%, rgba(213,140,121,0.16), transparent 55%), var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity 0.4s;}
 #onboarding.hidden{opacity:0;pointer-events:none;}
-.ob-logo{font-size:48px;margin-bottom:8px;}
-.ob-title{font-size:32px;font-weight:800;color:#ffffff;margin-bottom:4px;}
-.ob-sub{font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:40px;text-align:center;}
-.ob-step{width:100%;max-width:480px;display:none;animation:fadeUp 0.4s ease;}
+.ob-wrap{width:100%;max-width:420px;}
+.ob-head{text-align:center;margin-bottom:28px;}
+.ob-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(213,140,121,0.12);border:1px solid rgba(213,140,121,0.3);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--beige);margin-bottom:16px;}
+.ob-logo-circle{width:64px;height:64px;border-radius:20px;background:linear-gradient(160deg,var(--beige),#c97e6a);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 10px 26px rgba(213,140,121,0.25);}
+.ob-logo-circle span{font-size:30px;}
+.ob-title{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px;}
+.ob-sub{font-size:13px;color:rgba(255,255,255,0.45);}
+.ob-progress-track{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin:24px 0 24px;}
+.ob-progress-fill{height:100%;background:linear-gradient(90deg,var(--beige),var(--beige-soft));border-radius:2px;transition:width .4s ease;}
+.ob-step{display:none;animation:fadeUp .35s ease;}
 .ob-step.active{display:block;}
-.ob-question{font-size:18px;font-weight:700;color:#ffffff;margin-bottom:20px;}
-.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.ob-card{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:16px;cursor:pointer;text-align:center;transition:all 0.2s;color:#ffffff;}
-.ob-card:hover,.ob-card.selected{background:rgba(250,232,224,0.15);border-color:var(--beige);}
-.ob-card .icon{font-size:28px;margin-bottom:8px;}
-.ob-card .label{font-size:13px;font-weight:600;color:#ffffff;}
-.ob-slider-wrap{margin-bottom:24px;}
-.ob-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.2);outline:none;}
-.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--beige);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.ob-slider-labels{display:flex;justify-content:space-between;font-size:12px;color:rgba(250,232,224,0.5);margin-top:8px;}
-.ob-slider-value{text-align:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:12px;}
-.ob-levels{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
-.ob-level{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 18px;cursor:pointer;color:var(--beige);transition:all 0.2s;}
-.ob-level:hover,.ob-level.selected{background:rgba(250,232,224,0.15);border-color:var(--beige);}
-.ob-level h4{font-size:15px;font-weight:700;margin-bottom:2px;}
-.ob-level p{font-size:12px;opacity:0.6;}
-.ob-progress{display:flex;gap:6px;margin-bottom:32px;}
-.ob-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.3s;}
-.ob-dot.active{background:var(--beige);}
-.ob-btn{width:100%;padding:16px;background:var(--beige);color:var(--navy);border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;}
-.ob-btn:hover{background:#fff;}
+.ob-question{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;}
+.ob-question-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:18px;}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.ob-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .18s;}
+.ob-card.selected{background:linear-gradient(160deg,rgba(213,140,121,0.2),rgba(213,140,121,0.05));border-color:var(--beige);}
+.ob-card .ic{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.ob-card.selected .ic{background:var(--beige);}
+.ob-card .lbl{font-size:12px;font-weight:700;color:#fff;}
+.ob-card.selected .lbl{color:var(--beige);}
+.ob-input{width:100%;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:13px 16px;color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;outline:none;margin-bottom:18px;}
+.ob-input::placeholder{color:rgba(255,255,255,0.3);}
+.ob-input:focus{border-color:var(--beige);}
+.ob-slider-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:22px;margin-bottom:18px;text-align:center;}
+.ob-slider-value{font-size:28px;font-weight:800;color:var(--beige);margin-bottom:14px;}
+.ob-slider{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:rgba(255,255,255,0.12);outline:none;}
+.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--beige);cursor:pointer;box-shadow:0 0 0 6px rgba(213,140,121,0.15);}
+.ob-slider-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);margin-top:10px;}
+.ob-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--beige),#c97e6a);color:var(--navy);border:none;border-radius:16px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 8px 22px rgba(213,140,121,0.22);}
+.ob-btn:hover{transform:translateY(-1px);}
+.ob-btn:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none;transform:none;}
+
 /* ===== MAIN APP ===== */
 #main-app{display:none;flex-direction:column;min-height:100vh;}
 #main-app.visible{display:flex;}
-header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
-.logo{display:flex;align-items:center;gap:12px;margin-bottom:2px;}
-.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--navy),var(--navy-dark));border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(27,42,74,0.2);}
-.logo h1{font-size:28px;font-weight:800;color:#ffffff;}
-.tagline{color:#ffffff;font-size:13px;margin-right:56px;}
-.powered{display:flex;align-items:center;gap:6px;margin-top:3px;margin-right:56px;}
-.powered span{font-size:11px;color:var(--muted);}
-.inma-badge{font-size:11px;font-weight:700;color:var(--beige);border:1px solid rgba(250,232,224,0.2);padding:2px 8px;border-radius:20px;}
-/* User profile banner */
-#profile-banner{width:100%;max-width:780px;margin:0 auto 4px;padding:0 24px;}
-.profile-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(250,232,224,0.08);border:1px solid rgba(250,232,224,0.15);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);}
-.profile-pill span{color:var(--beige);font-weight:600;}
+
+/* Top bar */
+.topbar{width:100%;max-width:780px;margin:0 auto;padding:18px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar-logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(160deg,var(--beige),#c97e6a);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.topbar-titles h1{font-size:18px;font-weight:800;color:#fff;line-height:1.1;}
+.topbar-titles p{font-size:10px;color:var(--beige);font-weight:700;}
+.topbar-profile{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--muted);}
+.topbar-profile b{color:var(--beige);font-weight:700;}
+
+/* Hero status card */
+#hero-card-wrap{width:100%;max-width:780px;margin:0 auto;padding:0 20px 12px;}
+.hero-card{background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:24px;padding:22px;box-shadow:0 14px 32px rgba(213,140,121,0.2);display:none;}
+.hero-card.show{display:block;}
+.hero-label{font-size:11px;color:var(--navy);opacity:0.65;margin-bottom:4px;font-weight:600;}
+.hero-score-row{display:flex;align-items:baseline;gap:8px;margin-bottom:16px;}
+.hero-score{font-size:42px;font-weight:800;color:var(--navy);line-height:1;}
+.hero-score-sub{font-size:12px;color:var(--navy);opacity:0.65;}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.hero-stat{background:rgba(2,20,30,0.1);border-radius:12px;padding:9px 10px;}
+.hero-stat-label{font-size:9px;color:var(--navy);opacity:0.6;margin-bottom:2px;}
+.hero-stat-value{font-size:14px;font-weight:800;color:var(--navy);}
+
+/* Goal tracker pill */
+#goal-tracker{width:100%;max-width:780px;margin:0 auto;padding:0 20px 12px;display:none;}
+#goal-tracker.show{display:block;}
+.goal-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:14px 16px;}
+.goal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.goal-head-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);}
+.goal-head-amount{font-size:12px;font-weight:700;color:var(--beige);}
+.goal-track{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.goal-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--beige));border-radius:4px;transition:width .8s ease;}
+.goal-foot{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);}
+.goal-foot b{color:var(--beige);font-size:13px;}
+
 /* Quick actions */
-#quick-actions{width:100%;max-width:780px;margin:0 auto;padding:8px 24px;}
-.quick-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+#quick-actions{width:100%;max-width:780px;margin:0 auto;padding:4px 20px 8px;}
+.quick-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;}
 .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.quick-card{background:var(--beige);border:1px solid rgba(250,232,224,0.3);border-radius:14px;padding:12px;cursor:pointer;text-align:center;transition:all 0.2s;}
-.quick-card:hover{border-color:var(--beige);transform:translateY(-1px);}
-.quick-card .q-icon{margin-bottom:8px;display:flex;justify-content:center;}
-.quick-card .q-icon svg{width:28px;height:28px;stroke:#02141E;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.quick-card .q-label{font-size:12px;font-weight:600;color:#02141E;}
+.quick-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .15s;}
+.quick-card:hover{border-color:var(--beige);transform:translateY(-2px);}
+.quick-card .q-icon{width:32px;height:32px;border-radius:10px;background:rgba(213,140,121,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.quick-card .q-icon svg{width:17px;height:17px;stroke:var(--beige);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.quick-card .q-label{font-size:11px;font-weight:700;color:#fff;}
+
 /* Chat */
 .chat-wrap{width:100%;max-width:780px;margin:0 auto;flex:1;display:flex;flex-direction:column;padding:0 16px;}
-#messages{flex:1;display:flex;flex-direction:column;gap:16px;padding:12px 0 24px;min-height:200px;}
+#messages{flex:1;display:flex;flex-direction:column;gap:14px;padding:14px 0 24px;min-height:200px;}
 .msg{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
 .msg.user{flex-direction:row-reverse;}
-.msg-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;}
-.msg.user .msg-avatar{background:var(--navy-mid);border:1px solid var(--border);}
-.msg.bot .msg-avatar{background:var(--navy);}
-.msg-bubble{max-width:82%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.75;}
+.msg-avatar{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
+.msg.user .msg-avatar{background:var(--card);border:1px solid rgba(255,255,255,0.08);}
+.msg.bot .msg-avatar{background:linear-gradient(160deg,var(--beige),#c97e6a);}
+.msg-bubble{max-width:82%;padding:13px 16px;border-radius:18px;font-size:14px;line-height:1.75;}
 .msg.user .msg-bubble{background:var(--beige);color:var(--navy);border-radius:18px 4px 18px 18px;font-weight:500;}
-.msg.bot .msg-bubble{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:4px 18px 18px 18px;white-space:pre-line;color:#ffffff;box-shadow:0 2px 8px rgba(27,42,74,0.05);}
+.msg.bot .msg-bubble{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:4px 18px 18px 18px;white-space:pre-line;color:#fff;}
+
 /* Stress indicator */
-.stress-bar{background:rgba(250,232,224,0.08);border:1px solid rgba(250,232,224,0.12);border-radius:16px;padding:14px 18px;margin-top:8px;animation:fadeUp 0.3s ease;}
-.stress-label{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:10px;font-weight:600;}
-.stress-track{display:flex;gap:4px;height:10px;border-radius:5px;overflow:hidden;margin-bottom:8px;}
+.stress-bar{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:15px 18px;margin-top:4px;animation:fadeUp 0.3s ease;}
+.stress-label{font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:10px;font-weight:700;}
+.stress-track{display:flex;gap:4px;height:8px;border-radius:4px;overflow:hidden;margin-bottom:9px;}
 .stress-seg{flex:1;border-radius:3px;transition:opacity 0.3s;}
 .stress-seg.active{opacity:1;}
-.stress-seg.inactive{opacity:0.15;}
+.stress-seg.inactive{opacity:0.12;}
 .stress-info{display:flex;justify-content:space-between;align-items:center;}
-.stress-status{font-size:14px;font-weight:700;}
-.stress-reason{font-size:12px;color:rgba(255,255,255,0.5);}
+.stress-status{font-size:13px;font-weight:700;}
+.stress-reason{font-size:11px;color:rgba(255,255,255,0.4);}
+
 /* Early warning */
-.early-warning{background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:13px;color:var(--red);font-weight:600;animation:fadeUp 0.3s ease;}
+.early-warning{background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.25);border-radius:14px;padding:12px 16px;margin-bottom:6px;font-size:13px;color:#f87171;font-weight:600;animation:fadeUp 0.3s ease;}
+
 /* Dashboard */
-.dashboard{background:rgba(250,232,224,0.06);border:1px solid rgba(250,232,224,0.12);border-radius:20px;padding:20px;margin-top:8px;box-shadow:0 4px 16px rgba(27,42,74,0.07);animation:fadeUp 0.4s ease;}
-.dash-title{font-size:12px;font-weight:700;color:rgba(250,232,224,0.6);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px;}
-.health-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:14px;background:var(--beige);border-radius:14px;}
-.score-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;border:3px solid;}
-.score-circle.ok{background:rgba(0,166,81,0.1);color:var(--green);border-color:var(--green);}
-.score-circle.warning{background:rgba(214,158,46,0.1);color:var(--yellow);border-color:var(--yellow);}
-.score-circle.danger{background:rgba(229,62,62,0.1);color:var(--red);border-color:var(--red);}
-.score-info h3{font-size:15px;font-weight:700;margin-bottom:2px;}
-.score-info p{font-size:12px;color:rgba(250,232,224,0.6);}
-.verdict-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:14px;}
-.verdict-badge.ok{background:rgba(0,166,81,0.1);color:var(--green);}
-.verdict-badge.warning{background:rgba(214,158,46,0.1);color:var(--yellow);}
-.verdict-badge.danger{background:rgba(229,62,62,0.1);color:var(--red);}
+.dashboard{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:22px;padding:20px;margin-top:4px;animation:fadeUp 0.4s ease;}
+.dash-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px;}
+.health-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:16px;background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:16px;}
+.score-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;background:rgba(2,20,30,0.12);color:var(--navy);}
+.score-info h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.score-info p{font-size:11px;color:var(--navy);opacity:0.65;}
+.verdict-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
+.verdict-badge.ok{background:rgba(0,166,81,0.15);color:#4ade80;}
+.verdict-badge.warning{background:rgba(214,158,46,0.15);color:#facc15;}
+.verdict-badge.danger{background:rgba(229,62,62,0.15);color:#f87171;}
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
-.stat-card{background:var(--beige);border-radius:12px;padding:10px 12px;}
-.stat-label{font-size:10px;color:var(--navy);margin-bottom:3px;}
-.stat-value{font-size:16px;font-weight:800;color:var(--navy-dark);}
-.stat-value.positive{color:var(--green);}
-.stat-value.negative{color:var(--red);}
-.chart-wrap{position:relative;height:180px;margin-bottom:16px;}
+.stat-card{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 12px;}
+.stat-label{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:3px;}
+.stat-value{font-size:15px;font-weight:800;color:#fff;}
+.stat-value.positive{color:#4ade80;}
+.stat-value.negative{color:#f87171;}
+.chart-wrap{position:relative;height:170px;margin-bottom:16px;}
+
 /* Decision quality */
-.decision-card{background:var(--beige);border-radius:14px;padding:16px;margin-top:14px;}
-.decision-title{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:12px;text-transform:uppercase;}
+.decision-card{background:rgba(255,255,255,0.04);border-radius:16px;padding:16px;margin-top:12px;}
+.decision-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:12px;text-transform:uppercase;}
 .success-rate{text-align:center;margin-bottom:14px;}
-.success-num{font-size:36px;font-weight:800;}
-.success-num.ok{color:var(--green);}
-.success-num.warning{color:var(--yellow);}
-.success-num.danger{color:var(--red);}
-.success-label{font-size:12px;color:var(--muted);}
+.success-num{font-size:34px;font-weight:800;}
+.success-num.ok{color:#4ade80;}
+.success-num.warning{color:#facc15;}
+.success-num.danger{color:#f87171;}
+.success-label{font-size:11px;color:rgba(255,255,255,0.4);}
 .timeline-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.timeline-item{background:var(--white);border-radius:10px;padding:10px 12px;}
-.timeline-period{font-size:10px;color:var(--muted);margin-bottom:3px;}
-.timeline-text{font-size:12px;font-weight:600;color:var(--navy);}
+.timeline-item{background:var(--card-2);border-radius:12px;padding:10px 12px;}
+.timeline-period{font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:3px;}
+.timeline-text{font-size:12px;font-weight:600;color:#fff;}
 .goal-align{display:flex;align-items:center;gap:8px;}
-.goal-bar-wrap{flex:1;height:6px;background:rgba(27,42,74,0.1);border-radius:3px;overflow:hidden;}
-.goal-bar{height:100%;border-radius:3px;background:var(--green);}
-.goal-pct{font-size:12px;font-weight:700;color:var(--text);}
+.goal-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+.goal-bar{height:100%;border-radius:3px;background:#4ade80;}
+.goal-pct{font-size:12px;font-weight:700;color:var(--beige);}
+
 /* Decision reasons */
-.reasons-card{background:var(--beige);border:1px solid rgba(27,42,74,0.1);border-radius:14px;padding:14px;margin-top:12px;}
-.reasons-title{font-size:12px;font-weight:700;color:var(--navy-dark);margin-bottom:10px;}
-.reason-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:var(--navy);}
-.reason-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px;}
-.reason-dot.ok{background:var(--green);}
+.reasons-card{background:rgba(255,255,255,0.04);border-radius:16px;padding:14px;margin-top:12px;}
+.reasons-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;}
+.reason-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#fff;}
+.reason-dot{width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;margin-top:5px;}
+.reason-dot.ok{background:#4ade80;}
+
 /* Scenarios */
 .scenarios-section{margin-top:14px;}
-.scenarios-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;text-transform:uppercase;}
+.scenarios-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;}
 .scenarios-grid{display:flex;flex-direction:column;gap:8px;}
-.scenario-row{display:flex;align-items:center;gap:10px;background:rgba(250,232,224,0.1);border-radius:12px;padding:12px 14px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;}
-.scenario-row.best{border-color:var(--green);}
-.scenario-row.medium{border-color:var(--yellow);}
-.scenario-row.risky{border-color:var(--red);}
+.scenario-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border-radius:14px;padding:12px 14px;border:1px solid transparent;}
+.scenario-row.best{border-color:rgba(74,222,128,0.4);}
+.scenario-row.medium{border-color:rgba(250,204,21,0.4);}
+.scenario-row.risky{border-color:rgba(248,113,113,0.4);}
 .scenario-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
-.scenario-rank.best{background:rgba(0,166,81,0.15);color:var(--green);}
-.scenario-rank.medium{background:rgba(214,158,46,0.15);color:var(--yellow);}
-.scenario-rank.risky{background:rgba(229,62,62,0.15);color:var(--red);}
+.scenario-rank.best{background:rgba(0,166,81,0.18);color:#4ade80;}
+.scenario-rank.medium{background:rgba(214,158,46,0.18);color:#facc15;}
+.scenario-rank.risky{background:rgba(229,62,62,0.18);color:#f87171;}
 .scenario-info{flex:1;}
 .scenario-name{font-size:13px;font-weight:700;margin-bottom:2px;color:#ffffff;}
 .scenario-detail{font-size:11px;color:var(--muted);}
-.scenario-amount{font-size:16px;font-weight:800;color:#ffffff;}
+.scenario-amount{font-size:15px;font-weight:800;color:#ffffff;text-align:left;}
+
 /* Rescue */
-.rescue-card{background:rgba(229,62,62,0.04);border:1px solid rgba(229,62,62,0.18);border-radius:14px;padding:14px;margin-top:12px;}
-.rescue-title{font-size:12px;font-weight:700;color:var(--red);margin-bottom:10px;}
-.rescue-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;}
-.step-num{width:20px;height:20px;background:var(--red);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
-/* Saudi comparison */
-.comparison-section{margin-top:14px;}
-.comparison-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;text-transform:uppercase;}
-.comparison-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.cmp-label{font-size:12px;color:var(--text);width:90px;flex-shrink:0;}
-.cmp-bar-wrap{flex:1;height:8px;background:var(--beige);border-radius:4px;overflow:hidden;position:relative;}
-.cmp-bar{height:100%;border-radius:4px;}
-.cmp-bar.good{background:var(--green);}
-.cmp-bar.bad{background:var(--red);}
-.cmp-pct{font-size:11px;color:var(--muted);width:32px;}
-.cmp-status{font-size:12px;font-weight:700;width:20px;}
-.cmp-status.good{color:var(--green);}
-.cmp-status.bad{color:var(--red);}
+.rescue-card{background:rgba(229,62,62,0.06);border:1px solid rgba(229,62,62,0.2);border-radius:16px;padding:14px;margin-top:12px;}
+.rescue-title{font-size:11px;font-weight:700;color:#f87171;margin-bottom:10px;}
+.rescue-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:#fff;}
+.step-num{width:20px;height:20px;background:#e53e3e;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+
 /* Loan details */
-.loan-card{background:var(--beige);border-radius:14px;padding:16px;margin-top:14px;}
-.loan-title{font-size:12px;font-weight:700;color:#02141E;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;}
+.loan-card{background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:18px;padding:18px;margin-top:14px;}
+.loan-title{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;}
 .loan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.loan-item{background:rgba(2,20,30,0.06);border-radius:10px;padding:10px 12px;}
-.loan-item-label{font-size:10px;color:rgba(2,20,30,0.5);margin-bottom:3px;}
-.loan-item-value{font-size:15px;font-weight:800;color:#02141E;}
-.loan-approval{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-top:8px;}
-.loan-approval.approved{background:rgba(0,166,81,0.12);}
-.loan-approval.rejected{background:rgba(229,62,62,0.1);}
-.loan-approval.partial{background:rgba(214,158,46,0.1);}
-.loan-approval-text{font-size:13px;font-weight:600;}
-.loan-approval.approved .loan-approval-text{color:var(--green);}
-.loan-approval.rejected .loan-approval-text{color:var(--red);}
-.loan-approval.partial .loan-approval-text{color:var(--yellow);}
+.loan-item{background:rgba(2,20,30,0.1);border-radius:10px;padding:10px 12px;}
+.loan-item-label{font-size:10px;color:var(--navy);opacity:0.6;margin-bottom:3px;}
+.loan-item-value{font-size:15px;font-weight:800;color:var(--navy);}
+.loan-approval{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-top:8px;background:rgba(2,20,30,0.1);}
+.loan-approval-text{font-size:13px;font-weight:700;color:var(--navy);}
+
 /* Plans */
 .plans-wrap{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
-.plan-card{border-radius:14px;padding:14px;}
-.plan-a{background:rgba(0,166,81,0.1);border:1px solid rgba(0,166,81,0.3);}
-.plan-b{background:rgba(213,140,121,0.1);border:1px solid rgba(213,140,121,0.3);}
+.plan-card{border-radius:16px;padding:15px;}
+.plan-a{background:rgba(0,166,81,0.08);border:1px solid rgba(0,166,81,0.25);}
+.plan-b{background:rgba(213,140,121,0.08);border:1px solid rgba(213,140,121,0.25);}
 .plan-title{font-size:13px;font-weight:700;margin-bottom:10px;}
 .plan-a .plan-title{color:#4ade80;}
 .plan-b .plan-title{color:#f0a98c;}
-.plan-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px;color:#ffffff;}
+.plan-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:12px;color:#ffffff;}
 .plan-num{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff;}
 .plan-a .plan-num{background:var(--green);}
 .plan-b .plan-num{background:#D58C79;}
-.plan-outcome{font-size:12px;font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);}
+.plan-outcome{font-size:12px;font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);}
 .plan-a .plan-outcome{color:#4ade80;}
 .plan-b .plan-outcome{color:#f0a98c;}
-.plan-tradeoff{font-size:12px;color:#ffffff;opacity:0.75;margin-top:4px;}
-/* ===== GOAL TRACKER ===== */
-#goal-tracker{width:100%;max-width:780px;margin:0 auto 4px;padding:0 24px;}
-.goal-tracker-card{background:rgba(250,232,224,0.06);border:1px solid rgba(250,232,224,0.14);border-radius:16px;padding:14px 18px;}
-.goal-tracker-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.goal-tracker-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;}
-.goal-tracker-amount{font-size:13px;font-weight:700;color:var(--beige);}
-.goal-progress-bar{width:100%;height:10px;background:rgba(255,255,255,0.1);border-radius:5px;overflow:hidden;margin-bottom:8px;}
-.goal-progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#00A651,#D58C79);transition:width 0.8s ease;}
-.goal-tracker-footer{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
-.goal-tracker-pct{font-size:15px;font-weight:800;color:var(--beige);}
-/* ===== COMPARISON CARD ===== */
-.comparison-card{background:rgba(250,232,224,0.06);border:1px solid rgba(250,232,224,0.14);border-radius:16px;padding:16px;margin-top:10px;animation:fadeUp 0.4s ease;}
-.comparison-card-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+.plan-tradeoff{font-size:12px;color:#ffffff;opacity:0.7;margin-top:4px;}
+
+/* Comparison card */
+.comparison-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;margin-top:10px;animation:fadeUp 0.4s ease;}
+.comparison-card-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
 .comparison-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.comp-col{border-radius:12px;padding:14px;}
+.comp-col{border-radius:14px;padding:14px;}
 .comp-col.now{background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.2);}
 .comp-col.later{background:rgba(0,166,81,0.08);border:1px solid rgba(0,166,81,0.2);}
 .comp-col-title{font-size:11px;font-weight:700;margin-bottom:10px;text-transform:uppercase;}
-.comp-col.now .comp-col-title{color:var(--red);}
-.comp-col.later .comp-col-title{color:var(--green);}
+.comp-col.now .comp-col-title{color:#f87171;}
+.comp-col.later .comp-col-title{color:#4ade80;}
 .comp-row{margin-bottom:7px;}
 .comp-row-label{font-size:10px;color:var(--muted);margin-bottom:2px;}
 .comp-row-value{font-size:14px;font-weight:800;color:#fff;}
-.comp-winner{text-align:center;margin-top:12px;padding:10px;background:rgba(0,166,81,0.1);border-radius:10px;font-size:13px;font-weight:700;color:var(--green);}
+.comp-winner{text-align:center;margin-top:12px;padding:10px;background:rgba(0,166,81,0.1);border-radius:10px;font-size:12px;font-weight:700;color:#4ade80;}
+
 /* Quick replies */
-.quick-replies{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-right:44px;}
-.quick-reply-btn{background:rgba(213,140,121,0.1);border:1.5px solid rgba(213,140,121,0.3);border-radius:20px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;color:#D58C79;cursor:pointer;transition:all 0.2s;font-weight:600;}
-.quick-reply-btn:hover{background:rgba(213,140,121,0.2);border-color:#D58C79;}
+.quick-replies{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-right:40px;}
+.quick-reply-btn{background:rgba(213,140,121,0.1);border:1px solid rgba(213,140,121,0.3);border-radius:20px;padding:8px 14px;font-family:'Tajawal',sans-serif;font-size:13px;color:var(--beige);cursor:pointer;transition:all 0.2s;font-weight:600;}
+.quick-reply-btn:hover{background:rgba(213,140,121,0.2);border-color:var(--beige);}
+.quick-reply-btn:disabled{opacity:0.4;cursor:default;}
+
 /* Typing */
 .typing{display:flex;gap:10px;animation:fadeUp 0.3s ease;}
-.typing-avatar{width:32px;height:32px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.typing-bubble{background:rgba(250,232,224,0.08);border:1px solid rgba(250,232,224,0.12);border-radius:4px 18px 18px 18px;padding:14px 18px;display:flex;gap:5px;align-items:center;}
+.typing-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(160deg,var(--beige),#c97e6a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.typing-bubble{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:4px 18px 18px 18px;padding:14px 18px;display:flex;gap:5px;align-items:center;}
 .dot{width:6px;height:6px;background:var(--beige);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.6;}
 .dot:nth-child(2){animation-delay:0.2s;}
 .dot:nth-child(3){animation-delay:0.4s;}
+
 /* Input */
-.input-area{padding:12px 0 28px;position:sticky;bottom:0;background:linear-gradient(to top,var(--navy) 80%,transparent);}
-.input-box{display:flex;gap:8px;align-items:flex-end;background:rgba(250,232,224,0.08);border:1.5px solid rgba(250,232,224,0.15);border-radius:18px;padding:8px 8px 8px 14px;box-shadow:0 2px 12px rgba(27,42,74,0.07);}
+.input-area{padding:12px 0 26px;position:sticky;bottom:0;background:linear-gradient(to top,var(--navy) 75%,transparent);}
+.input-box{display:flex;gap:8px;align-items:flex-end;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:8px 8px 8px 14px;}
 .input-box:focus-within{border-color:var(--beige);}
-#userInput{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;resize:none;line-height:1.6;max-height:100px;min-height:26px;}
+#userInput{flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:'Tajawal',sans-serif;font-size:15px;resize:none;line-height:1.6;max-height:100px;min-height:26px;}
 #userInput::placeholder{color:var(--muted);}
 .btn-row{display:flex;gap:6px;}
-#sendBtn,#imgBtn{width:40px;height:40px;border:none;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
-#sendBtn{background:var(--navy);box-shadow:0 3px 10px rgba(27,42,74,0.2);}
-#imgBtn{background:rgba(250,232,224,0.12);border:1.5px solid rgba(250,232,224,0.2);}
+#sendBtn,#imgBtn{width:40px;height:40px;border:none;border-radius:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
+#sendBtn{background:linear-gradient(135deg,var(--beige),#c97e6a);}
+#imgBtn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);}
 #sendBtn:hover,#imgBtn:hover{transform:scale(1.05);}
 #sendBtn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
-#sendBtn svg{width:16px;height:16px;fill:var(--beige);}
+#sendBtn svg{width:16px;height:16px;fill:var(--navy);}
 #imgBtn svg{width:16px;height:16px;fill:var(--beige);}
-.hint{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;opacity:0.5;}
-.img-preview{max-width:180px;border-radius:10px;margin:6px 0;display:block;}
+.hint{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;opacity:0.5;}
+.img-preview{max-width:180px;border-radius:12px;margin:6px 0;display:block;}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
 </style>
@@ -259,71 +274,85 @@ header{width:100%;max-width:780px;margin:0 auto;padding:20px 24px 8px;}
 
 <!-- ONBOARDING -->
 <div id="onboarding">
-  <div class="ob-logo">🌱</div>
-  <div class="ob-title">نمو</div>
-  <div class="ob-sub">مستشارك المالي الذكي من الإنماء</div>
-  <div class="ob-progress">
-    <div class="ob-dot active" id="dot0"></div>
-    <div class="ob-dot" id="dot1"></div>
-  </div>
+  <div class="ob-wrap">
+    <div class="ob-head">
+      <div class="ob-badge">⚡ بالشراكة مع مصرف الإنماء</div>
+      <div class="ob-logo-circle"><span>🌱</span></div>
+      <div class="ob-title">نمو</div>
+      <div class="ob-sub">مساعدك الذكي لاتخاذ القرار المالي</div>
+    </div>
 
-  <!-- Step 1: Goal -->
-  <div class="ob-step active" id="step0">
-    <div class="ob-question">🎯 ما هدفك المالي الرئيسي؟</div>
-    <div class="ob-grid">
-      <div class="ob-card" onclick="selectGoal(this,'شراء منزل')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="label">شراء منزل</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'شراء سيارة')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M17 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M5 17H3V13L6 6h12l3 7v4h-2M9 17h6"/></svg></div><div class="label">شراء سيارة</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الزواج')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="6"/><path d="M8 10l1.5-4h5L16 10"/><path d="M8 10h8"/><polygon points="10,10 12,7 14,10 12,8.5"/></svg></div><div class="label">الزواج</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'السفر')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div><div class="label">السفر</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الاستثمار')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div class="label">الاستثمار</div></div>
-      <div class="ob-card" onclick="selectGoal(this,'الادخار العام')"><div class="icon"><svg viewBox="0 0 24 24" width="32" height="32" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4z"/></svg></div><div class="label">الادخار</div></div>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <input type="text" id="customGoal" placeholder="هدف آخر..." style="flex:1;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:var(--beige);font-family:'Tajawal',sans-serif;font-size:14px;outline:none;" oninput="handleCustomGoal(this.value)">
-    </div>
-    <button class="ob-btn" onclick="nextStep()" id="btn0" disabled>التالي ←</button>
-  </div>
+    <div class="ob-progress-track"><div class="ob-progress-fill" id="progressFill" style="width:50%"></div></div>
 
-  <!-- Step 2: Income -->
-  <div class="ob-step" id="step1">
-    <div class="ob-question">💰 ما نطاق دخلك الشهري؟</div>
-    <div class="ob-slider-wrap">
-      <div class="ob-slider-value" id="sliderVal">5,000 ريال</div>
-      <input type="range" class="ob-slider" id="incomeSlider" min="0" max="50000" step="500" value="5000" oninput="updateSlider(this.value)">
-      <div class="ob-slider-labels"><span>0</span><span>25,000</span><span>50,000+</span></div>
+    <!-- Step 1: Goal -->
+    <div class="ob-step active" id="step0">
+      <div class="ob-question">🎯 ما هدفك المالي الرئيسي؟</div>
+      <div class="ob-question-sub">يساعدنا نخصص التحليل والخطط لك</div>
+      <div class="ob-grid">
+        <div class="ob-card" onclick="selectGoal(this,'شراء منزل')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="lbl">شراء منزل</div></div>
+        <div class="ob-card" onclick="selectGoal(this,'شراء سيارة')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M17 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M5 17H3V13L6 6h12l3 7v4h-2M9 17h6"/></svg></div><div class="lbl">شراء سيارة</div></div>
+        <div class="ob-card" onclick="selectGoal(this,'الزواج')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="6"/><path d="M8 10l1.5-4h5L16 10"/><path d="M8 10h8"/><polygon points="10,10 12,7 14,10 12,8.5"/></svg></div><div class="lbl">الزواج</div></div>
+        <div class="ob-card" onclick="selectGoal(this,'السفر')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div><div class="lbl">السفر</div></div>
+        <div class="ob-card" onclick="selectGoal(this,'الاستثمار')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div class="lbl">الاستثمار</div></div>
+        <div class="ob-card" onclick="selectGoal(this,'الادخار العام')"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4z"/></svg></div><div class="lbl">الادخار</div></div>
+      </div>
+      <input type="text" id="customGoal" class="ob-input" placeholder="هدف آخر..." oninput="handleCustomGoal(this.value)">
+      <button class="ob-btn" onclick="nextStep()" id="btn0" disabled>التالي ←</button>
     </div>
-    <button class="ob-btn" onclick="startApp()">ابدأ مع نمو 🌱</button>
+
+    <!-- Step 2: Income -->
+    <div class="ob-step" id="step1">
+      <div class="ob-question">💰 ما نطاق دخلك الشهري؟</div>
+      <div class="ob-question-sub">يساعدنا نحسب أهليتك بدقة</div>
+      <div class="ob-slider-card">
+        <div class="ob-slider-value" id="sliderVal">5,000 ريال</div>
+        <input type="range" class="ob-slider" id="incomeSlider" min="0" max="50000" step="500" value="5000" oninput="updateSlider(this.value)">
+        <div class="ob-slider-labels"><span>0</span><span>25,000</span><span>50,000+</span></div>
+      </div>
+      <button class="ob-btn" onclick="startApp()">ابدأ مع نمو 🌱</button>
+    </div>
   </div>
 </div>
 
 <!-- MAIN APP -->
 <div id="main-app">
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🌱</div>
-      <h1>نمو</h1>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🌱</div>
+      <div class="topbar-titles">
+        <h1>نمو</h1>
+        <p>مدعوم من الإنماء</p>
+      </div>
     </div>
-    <p class="tagline">مستشارك المالي الذكي — يحلل وضعك قبل أي قرار</p>
-    <div class="powered"><span>مدعوم من</span><span class="inma-badge">الإنماء</span></div>
-  </header>
+    <div class="topbar-profile">هدفك: <b id="profile-goal">-</b></div>
+  </div>
 
-  <div id="profile-banner">
-    <div class="profile-pill">هدفك: <span id="profile-goal">-</span> &nbsp;|&nbsp; الدخل: <span id="profile-income">-</span></div>
+  <div id="hero-card-wrap">
+    <div class="hero-card" id="heroCard">
+      <div class="hero-label">صحة وضعك المالي</div>
+      <div class="hero-score-row">
+        <div class="hero-score" id="heroScore">0</div>
+        <div class="hero-score-sub">من 100</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-label">الدخل</div><div class="hero-stat-value" id="heroIncome">—</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">المتبقي</div><div class="hero-stat-value" id="heroRemaining">—</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">الادخار</div><div class="hero-stat-value" id="heroSavingsRate">—</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- GOAL TRACKER -->
-  <div id="goal-tracker" style="display:none;">
-    <div class="goal-tracker-card">
-      <div class="goal-tracker-header">
-        <div class="goal-tracker-title">🎯 <span id="gt-goal-name">هدفك</span></div>
-        <div class="goal-tracker-amount"><span id="gt-saved">0</span> / <span id="gt-target">0</span> ريال</div>
+  <div id="goal-tracker">
+    <div class="goal-card">
+      <div class="goal-head">
+        <div class="goal-head-title">🎯 <span id="gt-goal-name">هدفك</span></div>
+        <div class="goal-head-amount"><span id="gt-saved">0</span> / <span id="gt-target">0</span> ريال</div>
       </div>
-      <div class="goal-progress-bar">
-        <div class="goal-progress-fill" id="gt-fill" style="width:0%"></div>
-      </div>
-      <div class="goal-tracker-footer">
+      <div class="goal-track"><div class="goal-fill" id="gt-fill" style="width:0%"></div></div>
+      <div class="goal-foot">
         <div>تبقى <span id="gt-remaining">0</span> ريال</div>
-        <div class="goal-tracker-pct"><span id="gt-pct">0</span>%</div>
+        <div><b id="gt-pct">0</b>%</div>
       </div>
     </div>
   </div>
@@ -398,10 +427,9 @@ function updateSlider(val) {
 
 function nextStep() {
   document.getElementById('step' + currentStep).classList.remove('active');
-  document.getElementById('dot' + currentStep).classList.remove('active');
   currentStep++;
   document.getElementById('step' + currentStep).classList.add('active');
-  document.getElementById('dot' + currentStep).classList.add('active');
+  document.getElementById('progressFill').style.width = '100%';
 }
 
 function startApp() {
@@ -410,7 +438,6 @@ function startApp() {
   document.getElementById('onboarding').classList.add('hidden');
   document.getElementById('main-app').classList.add('visible');
   document.getElementById('profile-goal').textContent = userProfile.goal;
-  document.getElementById('profile-income').textContent = userProfile.income_range;
 
   // Update quick actions based on goal
   const goalQuicks = {
@@ -438,11 +465,11 @@ function startApp() {
 
   const quicks = goalQuicks[userProfile.goal] || goalQuicks['default'];
   const goalIcons = {
-    'شراء منزل': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-    'شراء سيارة': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="11" width="22" height="9" rx="2"/><path d="M5 11l2-5h10l2 5"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
-    'default_analyze': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7h-7z"/></svg>',
-    'loan': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
-    'whatif': '<svg viewBox="0 0 24 24" width="28" height="28" stroke="#02141E" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>'
+    'شراء منزل': '<svg viewBox="0 0 24 24" width="17" height="17" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    'شراء سيارة': '<svg viewBox="0 0 24 24" width="17" height="17" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="11" width="22" height="9" rx="2"/><path d="M5 11l2-5h10l2 5"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
+    'default_analyze': '<svg viewBox="0 0 24 24" width="17" height="17" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7h-7z"/></svg>',
+    'loan': '<svg viewBox="0 0 24 24" width="17" height="17" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    'whatif': '<svg viewBox="0 0 24 24" width="17" height="17" stroke="#D58C79" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>'
   };
 
   const grid = document.querySelector('.quick-grid');
@@ -450,7 +477,7 @@ function startApp() {
     let icon = q.type === 'قرض' ? goalIcons.loan : q.type === 'ماذا لو' ? goalIcons.whatif : (goalIcons[userProfile.goal] || goalIcons.default_analyze);
     return q.type
       ? `<div class="quick-card" onclick="openFreeInput('${q.type}')"><div class="q-icon">${icon}</div><div class="q-label">${q.label}</div></div>`
-      : `<div class="quick-card" onclick="quickAsk('${q.msg}')"><div class="q-icon">${goalIcons.default_analyze}</div><div class="q-label">${q.label}</div></div>`;
+      : `<div class="quick-card" onclick="quickAsk('${q.msg}')"><div class="q-icon">${icon}</div><div class="q-label">${q.label}</div></div>`;
   }).join('');
 
   setTimeout(() => {
@@ -459,6 +486,17 @@ function startApp() {
       has_data: false
     });
   }, 300);
+}
+
+// ===== HERO STATUS CARD =====
+function updateHeroCard(data) {
+  const card = document.getElementById('heroCard');
+  if (!data) return;
+  card.classList.add('show');
+  document.getElementById('heroScore').textContent = data.health_score || 0;
+  document.getElementById('heroIncome').textContent = (data.income || 0).toLocaleString() + ' ر';
+  document.getElementById('heroRemaining').textContent = Math.max(0, data.remaining || 0).toLocaleString() + ' ر';
+  document.getElementById('heroSavingsRate').textContent = String(data.savings_rate || 0).replace(/%/g,'') + '%';
 }
 
 // ===== GOAL TRACKER =====
@@ -481,7 +519,7 @@ function updateGoalTracker(savings) {
   document.getElementById('gt-remaining').textContent = remaining.toLocaleString();
   document.getElementById('gt-pct').textContent = pct;
   document.getElementById('gt-fill').style.width = pct + '%';
-  tracker.style.display = 'block';
+  tracker.classList.add('show');
 }
 
 // ===== COMPARISON: الحين vs بعد 6 أشهر =====
@@ -490,7 +528,6 @@ function buildComparisonCard(loanData, savings) {
   const monthly = loanData.monthly_payment || 0;
   const total = loanData.total_paid || 0;
   const adminFee = loanData.admin_fee || 0;
-  // بعد 6 أشهر: يوفر أكثر، فائدة أقل
   const laterMonthly = Math.round(monthly * 0.94);
   const laterTotal = Math.round(total * 0.92);
   const laterAdmin = adminFee;
@@ -575,9 +612,7 @@ function appendBotMessage(data) {
   }
   const div = document.createElement('div');
   div.className = 'msg bot';
-  // شبكة أمان: لو وصل نص فيه JSON خام أو code blocks، ننظفه
   let cleanMsg = (data.message || '');
-  // لو الرسالة كاملة JSON خام (تبدأ بـ { وفيها "message")، نحاول نستخرج message
   if (cleanMsg.includes('```') || (cleanMsg.trim().startsWith('{') && cleanMsg.includes('"message"'))) {
     cleanMsg = cleanMsg.replace(/```json/gi, '').replace(/```/g, '').trim();
     const m = cleanMsg.match(/"message"\s*:\s*"([^"]*)"/);
@@ -602,10 +637,9 @@ function appendBotMessage(data) {
   }
   if (data.stress_level) messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));
   if (data.has_data && data.data) {
+    updateHeroCard(data.data);
     messagesEl.appendChild(buildDashboard(data));
-    // تحديث شريط الهدف
     if (data.data.savings) updateGoalTracker(data.data.savings);
-    // بطاقة المقارنة الزمنية
     if (data.loan_details) {
       const comp = buildComparisonCard(data.loan_details, data.data.savings);
       if (comp) messagesEl.appendChild(comp);
@@ -624,13 +658,13 @@ function sendQuickReply(btn, text) {
 
 function buildStressBar(level, reason) {
   const levels = {
-    safe: { label: '🟢 مرتاح مالياً', color: 'var(--green)', segs: 1 },
-    watch: { label: '🟡 يحتاج انتباه', color: 'var(--yellow)', segs: 2 },
-    stress: { label: '🟠 ضغط مالي', color: 'var(--orange)', segs: 3 },
-    danger: { label: '🔴 خطر مالي', color: 'var(--red)', segs: 4 }
+    safe: { label: '🟢 مرتاح مالياً', color: '#4ade80', segs: 1 },
+    watch: { label: '🟡 يحتاج انتباه', color: '#facc15', segs: 2 },
+    stress: { label: '🟠 ضغط مالي', color: '#fb923c', segs: 3 },
+    danger: { label: '🔴 خطر مالي', color: '#f87171', segs: 4 }
   };
   const l = levels[level] || levels.safe;
-  const colors = ['var(--green)', 'var(--yellow)', 'var(--orange)', 'var(--red)'];
+  const colors = ['#4ade80', '#facc15', '#fb923c', '#f87171'];
   let segsHTML = colors.map((c, i) =>
     `<div class="stress-seg ${i < l.segs ? 'active' : 'inactive'}" style="background:${c}"></div>`
   ).join('');
@@ -657,7 +691,6 @@ function buildDashboard(data) {
   const remaining = Math.max(0, d.remaining || 0);
   let scoreLabel = score >= 70 ? 'صحة مالية ممتازة' : score >= 40 ? 'وضع مالي معقول' : 'وضع مالي يحتاج تحسين';
 
-  // Scenarios
   let scenariosHTML = '';
   if (data.scenarios && data.scenarios.length > 0) {
     const riskMap = { low: 'best', medium: 'medium', high: 'risky' };
@@ -676,7 +709,6 @@ function buildDashboard(data) {
     scenariosHTML = `<div class="scenarios-section"><div class="scenarios-title">📊 مقارنة الخيارات</div><div class="scenarios-grid">${rows}</div></div>`;
   }
 
-  // Decision quality
   let decisionHTML = '';
   if (data.decision_quality && (data.decision_quality.success_rate || 0) > 0) {
     const dq = data.decision_quality;
@@ -701,7 +733,6 @@ function buildDashboard(data) {
     </div>`;
   }
 
-  // Decision reasons
   let reasonsHTML = '';
   if (data.decision_reasons && data.decision_reasons.length > 0) {
     const items = data.decision_reasons.map(r =>
@@ -710,7 +741,6 @@ function buildDashboard(data) {
     reasonsHTML = `<div class="reasons-card"><div class="reasons-title">📋 أسباب هذا التقييم</div>${items}</div>`;
   }
 
-  // Rescue plan
   let rescueHTML = '';
   if (data.rescue_plan && data.rescue_plan.length > 0) {
     const steps = data.rescue_plan.map((s,i) =>
@@ -718,7 +748,6 @@ function buildDashboard(data) {
     rescueHTML = `<div class="rescue-card"><div class="rescue-title">🚨 خطة الإنقاذ</div>${steps}</div>`;
   }
 
-  // Loan details
   let loanHTML = '';
   if (data.loan_details) {
     const l = data.loan_details;
@@ -734,14 +763,13 @@ function buildDashboard(data) {
         <div class="loan-item"><div class="loan-item-label">إجمالي المدفوع</div><div class="loan-item-value">${(l.total_paid||0).toLocaleString()} ر</div></div>
         <div class="loan-item"><div class="loan-item-label">أقصى مبلغ مؤهل</div><div class="loan-item-value">${(l.max_eligible||0).toLocaleString()} ر</div></div>
       </div>
-      <div class="loan-approval ${apStatus}">
+      <div class="loan-approval">
         <div class="loan-approval-text">${apLabel}</div>
       </div>
-      ${l.approval_reason ? `<div style="font-size:12px;color:rgba(2,20,30,0.6);margin-top:8px;">${l.approval_reason}</div>` : ''}
+      ${l.approval_reason ? `<div style="font-size:12px;color:var(--navy);opacity:0.7;margin-top:8px;">${l.approval_reason}</div>` : ''}
     </div>`;
   }
 
-  // Plan A & B
   let plansHTML = '';
   const hasA = data.plan_a && (data.plan_a.steps||[]).length > 0;
   const hasB = data.plan_b && (data.plan_b.steps||[]).length > 0;
@@ -759,15 +787,13 @@ function buildDashboard(data) {
     plansHTML = `<div class="plans-wrap">${pA}${pB}</div>`;
   }
 
-  let compHTML = '';
-
   const canvasId = 'chart_' + Date.now();
   const dash = document.createElement('div');
   dash.className = 'dashboard';
   dash.innerHTML = `
     <div class="dash-title">📈 لوحة التحكم المالية</div>
     <div class="health-row">
-      <div class="score-circle ${scoreClass}">${score}</div>
+      <div class="score-circle">${score}</div>
       <div class="score-info"><h3>${scoreLabel}</h3><p>مؤشر الصحة المالية من 100</p></div>
     </div>
     ${verdict ? `<div class="verdict-badge ${verdict}">${verdictLabels[verdict]}</div>` : ''}
@@ -792,13 +818,13 @@ function buildDashboard(data) {
         labels: ['المصروفات', 'المدخرات', 'القسط الجديد', 'المتبقي'],
         datasets: [{
           data: [d.expenses||0, d.savings||0, d.new_payment||0, remaining],
-          backgroundColor: ['#02141E', '#00A651', '#8a9bbf', '#D58C79'],
+          backgroundColor: ['#D58C79', '#00A651', '#8a9bbf', '#0d2a40'],
           borderWidth: 0, hoverOffset: 6
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { font: { family: 'Tajawal', size: 11 }, padding: 12 } } },
+        plugins: { legend: { position: 'bottom', labels: { font: { family: 'Tajawal', size: 11 }, padding: 12, color: '#ffffff' } } },
         cutout: '60%'
       }
     });
@@ -862,10 +888,8 @@ async function sendMessage() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     removeTyping();
-    // نحفظ الرسالة النصية فقط في التاريخ، مو الـ JSON كامل
     const assistantMsg = data.message || '';
     conversationHistory.push({ role: 'assistant', content: assistantMsg });
-    // نحتفظ بآخر 12 رسالة فقط = رد أسرع وأخف على السيرفر
     if (conversationHistory.length > 12) {
       conversationHistory = conversationHistory.slice(-12);
     }
