@@ -18,6 +18,7 @@ except Exception:
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
 app = Flask(__name__, static_folder='.')
+app.config['JSON_AS_ASCII'] = False
 # timeout 60 ثانية + إعادة المحاولة مرة عند فشل الاتصال = أسرع وأثبت
 client = anthropic.Anthropic(api_key=API_KEY, timeout=60.0, max_retries=1)
 
