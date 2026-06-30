@@ -65,19 +65,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);m
 .topbar-profile{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--muted);}
 .topbar-profile b{color:var(--beige);font-weight:700;}
 
-/* Hero status card */
-#hero-card-wrap{width:100%;max-width:780px;margin:0 auto;padding:0 20px 12px;}
-.hero-card{background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:24px;padding:22px;box-shadow:0 14px 32px rgba(213,140,121,0.2);display:none;}
-.hero-card.show{display:block;}
-.hero-label{font-size:11px;color:var(--navy);opacity:0.65;margin-bottom:4px;font-weight:600;}
-.hero-score-row{display:flex;align-items:baseline;gap:8px;margin-bottom:16px;}
-.hero-score{font-size:42px;font-weight:800;color:var(--navy);line-height:1;}
-.hero-score-sub{font-size:12px;color:var(--navy);opacity:0.65;}
-.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.hero-stat{background:rgba(2,20,30,0.1);border-radius:12px;padding:9px 10px;}
-.hero-stat-label{font-size:9px;color:var(--navy);opacity:0.6;margin-bottom:2px;}
-.hero-stat-value{font-size:14px;font-weight:800;color:var(--navy);}
-
 /* Goal tracker pill */
 #goal-tracker{width:100%;max-width:780px;margin:0 auto;padding:0 20px 12px;display:none;}
 #goal-tracker.show{display:block;}
@@ -129,10 +116,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);m
 /* Dashboard */
 .dashboard{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:22px;padding:20px;margin-top:4px;animation:fadeUp 0.4s ease;}
 .dash-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px;}
-.health-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:16px;background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:16px;}
-.score-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;background:rgba(2,20,30,0.12);color:var(--navy);}
-.score-info h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.health-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:18px;background:linear-gradient(155deg,var(--beige),#c97e6a);border-radius:18px;}
+.score-info h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px;}
 .score-info p{font-size:11px;color:var(--navy);opacity:0.65;}
+.score-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;background:rgba(2,20,30,0.12);color:var(--navy);}
 .verdict-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
 .verdict-badge.ok{background:rgba(0,166,81,0.15);color:#4ade80;}
 .verdict-badge.warning{background:rgba(214,158,46,0.15);color:#facc15;}
@@ -327,21 +314,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);m
     <div class="topbar-profile">هدفك: <b id="profile-goal">-</b></div>
   </div>
 
-  <div id="hero-card-wrap">
-    <div class="hero-card" id="heroCard">
-      <div class="hero-label">صحة وضعك المالي</div>
-      <div class="hero-score-row">
-        <div class="hero-score" id="heroScore">0</div>
-        <div class="hero-score-sub">من 100</div>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-label">الدخل</div><div class="hero-stat-value" id="heroIncome">—</div></div>
-        <div class="hero-stat"><div class="hero-stat-label">المتبقي</div><div class="hero-stat-value" id="heroRemaining">—</div></div>
-        <div class="hero-stat"><div class="hero-stat-label">الادخار</div><div class="hero-stat-value" id="heroSavingsRate">—</div></div>
-      </div>
-    </div>
-  </div>
-
   <!-- GOAL TRACKER -->
   <div id="goal-tracker">
     <div class="goal-card">
@@ -488,17 +460,6 @@ function startApp() {
   }, 300);
 }
 
-// ===== HERO STATUS CARD =====
-function updateHeroCard(data) {
-  const card = document.getElementById('heroCard');
-  if (!data) return;
-  card.classList.add('show');
-  document.getElementById('heroScore').textContent = data.health_score || 0;
-  document.getElementById('heroIncome').textContent = (data.income || 0).toLocaleString() + ' ر';
-  document.getElementById('heroRemaining').textContent = Math.max(0, data.remaining || 0).toLocaleString() + ' ر';
-  document.getElementById('heroSavingsRate').textContent = String(data.savings_rate || 0).replace(/%/g,'') + '%';
-}
-
 // ===== GOAL TRACKER =====
 const goalTargets = {
   'شراء منزل': 200000, 'شراء سيارة': 80000, 'الزواج': 60000,
@@ -637,7 +598,6 @@ function appendBotMessage(data) {
   }
   if (data.stress_level) messagesEl.appendChild(buildStressBar(data.stress_level, data.stress_reason));
   if (data.has_data && data.data) {
-    updateHeroCard(data.data);
     messagesEl.appendChild(buildDashboard(data));
     if (data.data.savings) updateGoalTracker(data.data.savings);
     if (data.loan_details) {
